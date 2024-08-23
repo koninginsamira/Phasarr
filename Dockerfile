@@ -5,6 +5,9 @@ WORKDIR /app
 COPY ./app/ ./
 
 RUN pip install -r ./requirements.txt
+RUN ./tailwindcss -i ./static/src/input.css -o ./static/css/main.css --minify
+
+RUN rm -rf ./tailwindcss ./tailwind.config.js ./static/src/ ./requirements.txt
 
 EXPOSE 5252
 

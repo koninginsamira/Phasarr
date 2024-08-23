@@ -1,0 +1,23 @@
+:root {
+    --surface: 25 28 26;
+    --surface-variant: 64 73 67;
+
+    --on-surface: 225 227 223;
+    --on-surface-variant: 192 201 193;
+
+    --primary: 112 219 168;
+    --secondary: 180 204 188;
+    --tertiary: 164 205 222;
+
+    --on-primary: 0 56 36;
+    --on-secondary: 32 53 42;
+    --on-tertiary: 6 53 67;
+
+    --primary-container: 0 82 54;
+    --secondary-container: 54 75 63;
+    --tertiary-container: 35 76 90;
+
+    --on-primary-container: 140 247 195;
+    --on-secondary-container: 208 232 216;
+    --on-tertiary-container: 192 233 250;
+}
