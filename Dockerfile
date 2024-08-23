@@ -6,9 +6,15 @@ COPY ./app/ ./
 
 RUN pip install -r ./requirements.txt
 
-ENV FLASK_ENV=production
-ENV PORT=7272
+EXPOSE 5252
 
-EXPOSE 7272
+VOLUME /config
+VOLUME /logs
+
+ENV PORT=5252
+ENV CONFIGPATH=/config/
+ENV DATAPATH=/data/
+
+ENV FLASK_ENV=production
 
 CMD ["gunicorn", "app:app"]
