@@ -567,18 +567,8 @@ video {
   background-color: rgb(var(--surface) / var(--tw-bg-opacity));
 }
 
-.bg-primary {
-  --tw-bg-opacity: 1;
-  background-color: rgb(var(--primary) / var(--tw-bg-opacity));
-}
-
 .text-center {
   text-align: center;
-}
-
-.text-red-600 {
-  --tw-text-opacity: 1;
-  color: rgb(220 38 38 / var(--tw-text-opacity));
 }
 
 .text-primary {
