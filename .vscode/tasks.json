@@ -1,24 +1,51 @@
 {
     "version": "2.0.0",
-    "tasks": [{
-        "label": "tailwind",
-        "type": "shell",
-        "isBackground": true,
-        "command": "cd ./app && ./tailwindcss -i ./static/src/input.css -o ./static/css/main.css --watch",
+    "tasks": [
+        {
+            "label": "tailwind",
+            "type": "shell",
+            "isBackground": true,
+            "command": "cd ./app && ./tailwindcss -i ./static/src/input.css -o ./static/css/main.css --watch",
 
-        // Let VS Code continue without waiting for task to end
-        "problemMatcher": [{
-            "pattern": [{
-                "regexp": ".",
-                "file": 1,
-                "location": 2,
-                "message": 3
-            }],
-            "background": {
-                "activeOnStart": true,
-                "beginsPattern": ".",
-                "endsPattern": ".",
+            // Let VS Code continue without waiting for task to end
+            "problemMatcher": [{
+                "pattern": [{
+                    "regexp": ".",
+                    "file": 1,
+                    "location": 2,
+                    "message": 3
+                }],
+                "background": {
+                    "activeOnStart": true,
+                    "beginsPattern": ".",
+                    "endsPattern": ".",
+                }
+            }]
+        },
+        {
+            "label": "docker",
+            "type": "shell",
+            "isBackground": true,
+            "command": "sudo docker build --no-cache -t phasarr-dev . && sudo docker run -t -i -p 5253:5253 -p 5678:5678 -e FLASK_ENV='development' -e LOG_LEVEL='debug' -e PORT='5253' phasarr-dev",
+    
+            // Wait for the container to start
+            "problemMatcher": {
+                "owner": "custom",
+                "fileLocation": ["relative", "${workspaceFolder}"],
+                "pattern": [
+                    {
+                        "regexp": "\\[\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2} \\+\\d{4}\\] \\[8\\] \\[INFO\\] Waiting for client to attach\\.\\.\\.",
+                        "file": 1,
+                        "line": 1,
+                        "message": 0
+                    }
+                ],
+                "background": {
+                    "activeOnStart": true,
+                    "beginsPattern": "^.*",
+                    "endsPattern": "\\[\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2} \\+\\d{4}\\] \\[8\\] \\[INFO\\] Waiting for client to attach\\.\\.\\."
+                }
             }
-        }]
-    }]
+        }
+    ]
 }

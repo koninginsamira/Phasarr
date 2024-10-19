@@ -5,9 +5,27 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python Debugger: Flask",
+            "name": "Debug docker",
+            "type": "debugpy",
+            "request": "attach",
+            "preLaunchTask": "docker",
+            "connect": {
+                "host": "localhost",
+                "port": 5678
+            },
+            "pathMappings": [
+                {
+                    "localRoot": "${workspaceFolder}/app",
+                    "remoteRoot": "."
+                }
+            ],
+            "justMyCode": true
+        },
+        {
+            "name": "Debug locally",
             "type": "debugpy",
             "request": "launch",
+            "preLaunchTask": "tailwind",
             "module": "flask",
             "env": {
                 "FLASK_APP": "app/app.py",
@@ -22,8 +40,7 @@
                 "--no-reload"
             ],
             "jinja": true,
-            "autoStartBrowser": false,
-            "preLaunchTask": "tailwind"
+            "autoStartBrowser": false
         }
     ]
 }
