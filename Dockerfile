@@ -5,10 +5,11 @@ WORKDIR /app
 
 COPY ./app/ ./
 
-RUN pip install -r ./requirements.txt
-RUN ./tailwindcss -i ./static/src/input.css -o ./static/css/main.css --minify
+RUN pip install -r ./phasarr/requirements.txt
+RUN ./phasarr/tailwindcss -i ./phasarr/static/src/input.css -o ./phasarr/static/css/main.css --minify
+RUN pip install -e .
 
-RUN rm -rf ./tailwindcss ./tailwind.config.js ./static/src/ ./requirements.txt
+RUN rm -rf ./phasarr/tailwindcss ./phasarr/tailwind.config.js ./phasarr/static/src/ ./phasarr/requirements.txt
 
 RUN printf \
     "#!/bin/bash \

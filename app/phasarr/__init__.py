@@ -28,10 +28,10 @@ if not is_local:
     init_gunicorn_logging(app)
 
 if is_dev_environment:
-    migrate_database(app)
-
-if is_dev_environment and is_docker:
-    attach_debugpy(app)
+    if is_local:
+        migrate_database(app)
+    elif is_docker:
+        attach_debugpy(app)
 
 
 import phasarr.blueprints
