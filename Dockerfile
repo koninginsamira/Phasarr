@@ -13,7 +13,7 @@ RUN rm -rf ./tailwindcss ./tailwind.config.js ./static/src/ ./requirements.txt
 RUN printf \
     "#!/bin/bash \
     \n\n \
-    gunicorn app:app --log-level=\${LOG_LEVEL}" \
+    gunicorn phasarr:app --log-level=\${LOG_LEVEL}" \
 > run.sh
 RUN chmod +x run.sh
 
@@ -22,13 +22,14 @@ EXPOSE 5252
 VOLUME /config
 VOLUME /logs
 
+ENV DOCKER=1
 ENV FLASK_ENV=production
 ENV LOG_LEVEL=info
 
 ENV PORT=5252
 ENV DEBUG_PORT=5678
 
-ENV CONFIGPATH=/config/
-ENV DATAPATH=/data/
+ENV CONFIGPATH=config/
+ENV DATAPATH=data/
 
 ENTRYPOINT ["bash", "./run.sh"]
