@@ -1,5 +1,3 @@
-import os
-
 from phasarr.config import Config
 
 from flask_migrate import Migrate
