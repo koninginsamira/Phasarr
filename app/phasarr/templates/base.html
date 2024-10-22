@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+
+        {% if title %}
+            <title>{{ title }} - Phasarr</title>
+        {% else %}
+            <title>Welcome to Phasarr</title>
+        {% endif %}
+
+        <link href="{{url_for('static',filename='css/dark.css')}}" rel="stylesheet">
+        <link href="{{url_for('static',filename='css/main.css')}}" rel="stylesheet">
+
+        <script>let FF_FOUC_FIX;</script>
+    </head>
+    <body class="min-h-screen bg-surface">
+        <h1 class="text-center text-primary">Phasarr!!</h1>
+        <hr>
+
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            <ul>
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </body>
+</html>

@@ -558,6 +558,10 @@ video {
   position: static;
 }
 
+.block {
+  display: block;
+}
+
 .min-h-screen {
   min-height: 100vh;
 }
