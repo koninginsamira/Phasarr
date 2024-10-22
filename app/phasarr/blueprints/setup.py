@@ -5,5 +5,5 @@ setup_app = Blueprint('setup', __name__)
 
 
 @setup_app.route("/")
-def index():
+def setup():
     return "setup"
