@@ -1,17 +1,16 @@
+import sqlalchemy as sql
 from flask import Blueprint
-from werkzeug.security import generate_password_hash, check_password_hash
-from phasarr import http_auth
+
+from phasarr import http_auth, db
+from phasarr.models.user import User
 
 
 auth_app = Blueprint('auth', __name__)
 
-users = {
-    "john": generate_password_hash("hello", "scrypt"),
-    "susan": generate_password_hash("bye", "scrypt")
-}
-
 
 @http_auth.verify_password
 def verify_password(username, password):
-    if username in users and check_password_hash(users.get(username), password):
-        return username
+    user = db.session.scalar(sql.select(User).where(User.username == username))
+
+    if user and user.check_password(password):
+        return user.username
