@@ -5,7 +5,7 @@ from phasarr import http_auth, db
 from phasarr.models.user import User
 
 
-auth_app = Blueprint('auth', __name__)
+auth_app = Blueprint("auth", __name__)
 
 
 @http_auth.verify_password
