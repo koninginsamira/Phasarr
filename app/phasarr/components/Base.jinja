@@ -1,3 +1,10 @@
+{#def
+    title: str = "",
+    messages: [str] = []
+#}
+
+{#css ../css/dark.css, ../css/main.css #}
+
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -9,12 +16,11 @@
             <title>Welcome to Phasarr</title>
         {% endif %}
 
-        <link href="{{url_for('static',filename='css/dark.css')}}" rel="stylesheet">
-        <link href="{{url_for('static',filename='css/main.css')}}" rel="stylesheet">
+        {{ catalog.render_assets() }}
 
         <script>let FF_FOUC_FIX;</script>
     </head>
-    <body class="min-h-screen bg-surface">
+    <body class="min-h-screen bg-surface-variant">
         <h1 class="text-center text-primary">Phasarr!!</h1>
         <hr>
 
@@ -28,6 +34,6 @@
             {% endif %}
         {% endwith %}
 
-        {% block content %}{% endblock %}
+        {{ content }}
     </body>
 </html>

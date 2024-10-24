@@ -1,0 +1,52 @@
+{#def
+    custom: bool = False,
+    variant: bool = False,
+    primary: bool = False,
+    transparent: bool = False,
+
+    additional_class: str = ""
+#}
+
+<div class="
+    flex flex-col gap-5
+    pb-5 {# {% if not content('cover') %}pt-5{% endif %} #}
+    rounded-lg
+    outline outline-1
+
+    {% if not custom %}
+        {% if variant %}
+            bg-surface-variant
+            text-on-surface-variant
+            outline-primary
+        {% elif primary %}
+            bg-primary
+            text-on-primary
+            outline-on-surface
+        {% elif transparent %}
+            bg-transparent
+            text-on-surface
+            outline-transparent
+        {% else %}
+            bg-surface
+            text-on-surface
+            outline-primary
+        {% endif %}
+    {% endif %}
+
+    {{ additional_class }}
+">
+    {# {% if content("cover") %}
+        <div className='rounded-t-lg overflow-hidden'>
+            {{ content("cover") }}
+        </div>
+    {% endif %} #}
+
+    <div class="
+        grow
+        flex flex-col gap-5
+        max-h-full
+        px-10
+    ">
+        {{ content }}
+    </div>
+</div>

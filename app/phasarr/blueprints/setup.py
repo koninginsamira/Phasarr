@@ -1,9 +1,9 @@
 import sqlalchemy as sql
 
 from flask_login import current_user
-from flask import Blueprint, flash, redirect, render_template, url_for
+from flask import Blueprint, flash, redirect, url_for
 
-from phasarr import db, config
+from phasarr import db, config, catalog
 from phasarr.models.user import User
 from phasarr.forms.setup import SetupForm
 
@@ -31,6 +31,10 @@ def setup():
             flash("Setup has been saved!")
             return redirect(url_for("main.main"))
         
-        return render_template("setup.html", title="Setup", form=form)
+        return catalog.render(
+            "setup.Setup",
+            title="Setup",
+            form=form
+        )
     
     return redirect(url_for("main.main"))

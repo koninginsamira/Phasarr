@@ -3,7 +3,8 @@ const defaultTheme = require('tailwindcss/defaultTheme');
 /** @type {import('tailwindcss').Config} */
 module.exports = {
     content: [
-        "./templates/**/*.{html,htm}",
+        "./templates/**/*.{html,htm,jinja}",
+        "./components/**/*.{html,htm,jinja}",
         "./static/src/**/*.js"
     ],
     theme: {
@@ -18,18 +19,26 @@ module.exports = {
                 'primary': 'rgb(var(--primary) / <alpha-value>)',
                 'secondary': 'rgb(var(--secondary) / <alpha-value>)',
                 'tertiary': 'rgb(var(--tertiary) / <alpha-value>)',
+
+                'error': 'rgb(var(--error) / <alpha-value>)',
                 
                 'on-primary': 'rgb(var(--on-primary) / <alpha-value>)',
                 'on-secondary': 'rgb(var(--on-secondary) / <alpha-value>)',
                 'on-tertiary': 'rgb(var(--on-tertiary) / <alpha-value>)',
+
+                'on-error': 'rgb(var(--on-error) / <alpha-value>)',
                 
                 'primary-container': 'rgb(var(--primary-container) / <alpha-value>)',
                 'secondary-container': 'rgb(var(--secondary-container) / <alpha-value>)',
                 'tertiary-container': 'rgb(var(--tertiary-container) / <alpha-value>)',
+
+                'error-container': 'rgb(var(--error-container) / <alpha-value>)',
                 
                 'on-primary-container': 'rgb(var(--on-primary-container) / <alpha-value>)',
                 'on-secondary-container': 'rgb(var(--on-secondary-container) / <alpha-value>)',
-                'on-tertiary-container': 'rgb(var(--on-tertiary-container) / <alpha-value>)'
+                'on-tertiary-container': 'rgb(var(--on-tertiary-container) / <alpha-value>)',
+
+                'on-error-container': 'rgb(var(--on-error-container) / <alpha-value>)'
             },
             
             backgroundImage: {
