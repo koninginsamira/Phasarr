@@ -570,9 +570,25 @@ video {
   left: 0px;
 }
 
+.-top-12 {
+  top: -3rem;
+}
+
+.-top-32 {
+  top: -8rem;
+}
+
+.-top-36 {
+  top: -9rem;
+}
+
 .mx-auto {
   margin-left: auto;
   margin-right: auto;
+}
+
+.-mt-96 {
+  margin-top: -24rem;
 }
 
 .flex {
@@ -593,6 +609,26 @@ video {
 
 .w-full {
   width: 100%;
+}
+
+.w-1 {
+  width: 0.25rem;
+}
+
+.w-96 {
+  width: 24rem;
+}
+
+.w-\[50rem\] {
+  width: 50rem;
+}
+
+.w-\[45rem\] {
+  width: 45rem;
+}
+
+.w-\[40rem\] {
+  width: 40rem;
 }
 
 .max-w-7xl {
@@ -731,12 +767,26 @@ video {
   line-height: 1.25rem;
 }
 
+.text-xl {
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+}
+
+.text-9xl {
+  font-size: 8rem;
+  line-height: 1;
+}
+
 .font-medium {
   font-weight: 500;
 }
 
 .font-thin {
   font-weight: 100;
+}
+
+.font-bold {
+  font-weight: 700;
 }
 
 .leading-6 {
@@ -766,6 +816,11 @@ video {
 .text-primary {
   --tw-text-opacity: 1;
   color: rgb(var(--primary) / var(--tw-text-opacity));
+}
+
+.text-secondary {
+  --tw-text-opacity: 1;
+  color: rgb(var(--secondary) / var(--tw-text-opacity));
 }
 
 .placeholder-transparent::-moz-placeholder {
@@ -800,6 +855,13 @@ video {
   transition-property: all;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   transition-duration: 150ms;
+}
+
+.absolute-center {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
 }
 
 @keyframes vibrate {

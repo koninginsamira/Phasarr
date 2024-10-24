@@ -3,27 +3,23 @@
 #}
 
 <Base>
-    <ui.containers.Container>
-        <ui.containers.Card>
-            <ui.containers.CardHeader>
-                <ui.containers.CardTitle><h1>Setup</h1></ui.containers.CardTitle>
-            </ui.containers.CardHeader>
-            <ui.containers.CardBody>
-                <form action="" method="post" novalidate>
-                    {{ form.hidden_tag() }}
-                    
-                    <div class="divide-y divide-gray-200">
-                        <div class="py-8 text-base leading-6 space-y-4 text-on-surface sm:text-lg sm:leading-7">
-                            <ui.forms.Input form_item={{ form.username }} />
-                            <ui.forms.Input form_item={{ form.password }} />
-                            <ui.forms.Input form_item={{ form.password2 }} />
-                            <ui.forms.Input form_item={{ form.auth_method }} />
-                        </div>
+    <ui.containers.Card additional_class="absolute-center w-[40rem]">
+        <h1 class="absolute left-0 -top-36 text-9xl font-bold text-primary">Setup</h1>
+        <ui.containers.CardBody>
+            <form action="" method="post" novalidate>
+                {{ form.hidden_tag() }}
+                
+                <div class="divide-y divide-gray-200">
+                    <div class="py-8 text-base leading-6 space-y-4 text-on-surface sm:text-lg sm:leading-7">
+                        <ui.forms.Input form_item={{ form.username }} />
+                        <ui.forms.Input form_item={{ form.password }} />
+                        <ui.forms.Input form_item={{ form.password2 }} />
+                        <ui.forms.Input form_item={{ form.auth_method }} />
                     </div>
-            
-                    <p class="text-primary">{{ form.submit() }}</p>
-                </form>
-            </ui.containers.CardBody>
-        </ui.containers.Card>
-    </ui.containers.Container>
+                </div>
+        
+                <p class="text-primary">{{ form.submit() }}</p>
+            </form>
+        </ui.containers.CardBody>
+    </ui.containers.Card>
 </Base>
