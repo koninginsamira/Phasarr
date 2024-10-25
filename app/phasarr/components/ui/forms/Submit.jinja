@@ -13,7 +13,7 @@
     additional_class: str = ""
 #}
 
-<div class="flex gap-2 items-center">{{ form.submit(class_="
+{{ form.submit(class_="
     w-full sm:w-auto
     px-5 py-2.5
     rounded-lg
@@ -53,4 +53,4 @@
     ")))) if not custom) +
 
     additional_class
-) }}{% if error %}<p class="text-error">Correct errors before you try again.</p>{% endif %}</div>
+) }}

@@ -1,28 +1,8 @@
-{#def
-    form
-#}
-
-<Base>
+<Base _attrs={{ attrs }}>
     <ui.containers.Card additional_class="absolute-center w-[40rem]">
         <h1 class="absolute left-0 -top-36 text-9xl font-bold text-primary">Setup</h1>
         <ui.containers.CardBody>
-            <form action="" method="post" novalidate>
-                {{ form.hidden_tag() }}
-                
-                <div class="divide-y divide-gray-200">
-                    <div class="
-                        py-8 leading-6 space-y-6 sm:leading-7
-                        text-base text-on-surface sm:text-lg
-                    ">
-                        <ui.forms.Input form_item={{ form.username }} />
-                        <ui.forms.Input form_item={{ form.password }} />
-                        <ui.forms.Input form_item={{ form.password2 }} />
-                        <ui.forms.Input form_item={{ form.auth_method }} />
-                    </div>
-                </div>
-        
-                <ui.forms.Submit primary error={{ form.errors }} form={{ form }} />
-            </form>
+            {{ content }}
         </ui.containers.CardBody>
     </ui.containers.Card>
 </Base>
