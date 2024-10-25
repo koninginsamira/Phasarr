@@ -1,0 +1,56 @@
+{#def
+    active: bool = False,
+
+    custom: bool = False,
+    variant: bool = False,
+    primary: bool = False,
+    error: bool = False,
+    transparent: bool = False,
+    disabled: bool = False,
+
+    form,
+
+    additional_class: str = ""
+#}
+
+<div class="flex gap-2 items-center">{{ form.submit(class_="
+    w-full sm:w-auto
+    px-5 py-2.5
+    rounded-lg
+    font-medium text-sm text-center
+    outline-offset-[-1px] " +
+
+    ("outline outline-1 cursor-pointer "
+        if active else (
+            "opacity-50 cursor-not-allowed "
+                if disabled else
+            "hover:outline hover:outline-1 focus:outline focus:outline-1 cursor-pointer "
+        )
+    ) +
+
+    (("
+        bg-error
+        text-on-error
+        outline-error
+    " + ("bg-transparent text-error" if active else "hover:bg-transparent hover:text-error")
+    if error else ("
+        bg-primary
+        text-on-primary
+        outline-primary
+    " + ("bg-transparent text-error" if active else "hover:bg-transparent hover:text-primary")
+    if primary else ("
+        bg-transparent
+        text-on-surface
+        outline-on-surface
+    " if transparent else ("
+        bg-surface-variant
+        text-on-surface-variant
+        outline-on-surface-variant
+    ") if variant else ("
+        bg-surface
+        text-on-surface
+        outline-on-surface
+    ")))) if not custom) +
+
+    additional_class
+) }}{% if error %}<p class="text-error">Correct errors before you try again.</p>{% endif %}</div>
