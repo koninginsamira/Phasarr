@@ -12,9 +12,9 @@ class _SetupConfig():
         self.__dict__["_SetupConfig__config"] = config
         self.__dict__["stage"] = int("0" + self.__config.get("Setup", "stage"))
 
-    def __setattr__(self, key: str, value: None):
+    def __setattr__(self, key: str, value = None):
         super().__setattr__(key, value)
-        self.__config.set("Setup", key, value)
+        self.__config.set("Setup", key, str(value))
 
         with open(config_path, "w") as config_file:
             self.__config.write(config_file)
@@ -28,9 +28,9 @@ class _FlaskConfig():
         self.__dict__["_FlaskConfig__config"] = config
         self.__dict__["secret"] = self.__config.get("Flask", "secret")
 
-    def __setattr__(self, key: str, value: None):
+    def __setattr__(self, key: str, value = None):
         super().__setattr__(key, value)
-        self.__config.set("Flask", key, value)
+        self.__config.set("Flask", key, str(value))
 
         with open(config_path, "w") as config_file:
             self.__config.write(config_file)
@@ -44,9 +44,9 @@ class _AuthenticationConfig():
         self.__dict__["_AuthenticationConfig__config"] = config
         self.__dict__["method"] = self.__config.get("Authentication", "method")
 
-    def __setattr__(self, key: str, value: None):
+    def __setattr__(self, key: str, value = None):
         super().__setattr__(key, value)
-        self.__config.set("Authentication", key, value)
+        self.__config.set("Authentication", key, str(value))
 
         with open(config_path, "w") as config_file:
             self.__config.write(config_file)
