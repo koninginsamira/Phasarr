@@ -5,6 +5,7 @@ from flask_httpauth import HTTPBasicAuth
 from jinjax import Catalog
 
 from phasarr.classes.config import Config
+from phasarr.helpers.forms import is_required
 from phasarr.helpers.debug import attach_debugpy
 from phasarr.helpers.log import init_gunicorn_logging
 from phasarr.helpers.database import init_database, migrate_database
@@ -16,6 +17,7 @@ config = Config()
 app = Flask(__name__)
 app.config["SECRET_KEY"] = config.flask.secret,
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///" + db_path
+app.jinja_env.filters['is_required'] = is_required
 
 catalog = Catalog(jinja_env=app.jinja_env)
 catalog.add_folder(components_dir)

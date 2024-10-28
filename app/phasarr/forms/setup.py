@@ -1,4 +1,4 @@
-from phasarr.helpers.forms import Form
+from phasarr.classes.form import Form
 import sqlalchemy as sql
 
 from phasarr.models.user import User

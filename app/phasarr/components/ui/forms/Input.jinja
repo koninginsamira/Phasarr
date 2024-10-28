@@ -22,10 +22,13 @@
                 text-sm
                 peer-placeholder-shown:text-base peer-placeholder-shown:top-2
                 transition-all
-                peer-focus:-top-3.5 peer-focus:text-sm" +
-                (" text-error peer-placeholder-shown:text-error peer-focus:text-error"
+                peer-focus:-top-3.5 peer-focus:text-sm " +
+                ("text-error peer-placeholder-shown:text-error peer-focus:text-error "
                     if form_item.errors else
-                " text-on-surface peer-placeholder-shown:text-on-surface peer-focus:text-primary")
+                "text-on-surface peer-placeholder-shown:text-on-surface peer-focus:text-primary ") +
+                ("after:content-['*'] after:ml-0.5 after:text-primary"
+                    if form_item | is_required else
+                "")
         ) }}
     </div>
     {% for error in form_item.errors %}
