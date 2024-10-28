@@ -5,7 +5,7 @@ from flask_httpauth import HTTPBasicAuth
 from jinjax import Catalog
 
 from phasarr.classes.config import Config
-from phasarr.helpers.forms import is_required
+from phasarr.helpers.form import is_required
 from phasarr.helpers.debug import attach_debugpy
 from phasarr.helpers.log import init_gunicorn_logging
 from phasarr.helpers.database import init_database, migrate_database

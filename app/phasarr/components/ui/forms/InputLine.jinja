@@ -1,0 +1,52 @@
+{#def
+    field,
+    field2: any = None
+#}
+
+{% set fields = [field, field2] %}
+<div class="flex flex-col gap-1">
+    <div class="flex flex-col gap-4">
+        {% for iter_field in fields %}
+            {% if iter_field %}
+                <div class="relative">
+                    {{ iter_field(
+                        autocomplete="off", placeholder=iter_field.name.title(),
+                        class_="
+                            peer placeholder-transparent
+                            h-10 w-full
+                            bg-transparent
+                            border-b-2
+                            focus:outline-none " +
+                            ("text-error border-error focus:border-error" 
+                                if iter_field.errors else
+                            "text-on-surface border-on-surface focus:border-primary")
+                    ) }}
+                    {{ iter_field.label(
+                        class_="
+                            absolute left-0 -top-3.5
+                            text-sm
+                            peer-placeholder-shown:text-base peer-placeholder-shown:top-2
+                            transition-all
+                            peer-focus:-top-3.5 peer-focus:text-sm " +
+                            ("text-error peer-placeholder-shown:text-error peer-focus:text-error "
+                                if iter_field.errors else
+                            "text-on-surface peer-placeholder-shown:text-on-surface peer-focus:text-primary ") +
+                            ("after:content-['*'] after:ml-0.5 after:text-primary"
+                                if iter_field | is_required else
+                            "")
+                    ) }}
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+
+    <div class="px-4 h-0 overflow-visible">
+        {% for iter_field in fields %}
+            {% if iter_field %}
+                {% for error in iter_field.errors %}
+                    <span class="text-sm text-error">{{ error }}</span>
+                {% endfor %}
+            {% endif %}
+        {% endfor %}
+    </div>
+</div>
