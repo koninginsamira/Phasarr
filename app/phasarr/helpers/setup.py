@@ -1,10 +1,8 @@
 from flask import redirect, url_for
 
-from phasarr import config
 
-
-def redirect_setup():
-    match config.setup.stage:
+def redirect_setup(stage: int):
+    match stage:
         case 0:
             return redirect(url_for("setup.authentication"))
         case 1:

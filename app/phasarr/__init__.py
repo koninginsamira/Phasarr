@@ -8,7 +8,7 @@ from phasarr.classes.config import Config
 from phasarr.helpers.debug import attach_debugpy
 from phasarr.helpers.log import init_gunicorn_logging
 from phasarr.helpers.database import init_database, migrate_database
-from phasarr.variables import is_local, is_dev_environment, is_docker, db_path, components_dir, templates_dir
+from phasarr.variables import is_local, is_dev_environment, is_docker, db_path, components_dir, templates_dir, migrations_dir
 
 
 config = Config()
@@ -32,7 +32,7 @@ if not is_local:
 
 if is_dev_environment:
     if is_local:
-        migrate_database(app)
+        migrate_database(app, migrations_dir)
     elif is_docker:
         attach_debugpy(app)
 

@@ -8,6 +8,7 @@ default_config_path = os.path.join(defaults_dir, "config.ini")
 
 components_dir = os.path.join(base_dir, "components")
 templates_dir = os.path.join(base_dir, "templates")
+migrations_dir = os.path.join(base_dir, "migrations")
 
 config_dir = os.path.join(base_dir, os.environ.get("CONFIGPATH", "config"))
 db_path = os.path.join(config_dir, "database.db")

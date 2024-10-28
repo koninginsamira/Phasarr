@@ -26,6 +26,6 @@ def before():
                 return redirect(url_for("main.main"))
         else:
             if not is_setup_done:
-                return redirect_setup()
+                return redirect_setup(config.setup.stage)
 
     return
