@@ -24,7 +24,7 @@
         <div class="flex justify-end mt-12">
             <div class="flex gap-2 items-center">
                 {% if form.errors %}<p class="text-error">Correct errors before you try again.</p>{% endif %}
-                {% if skippable %}<ui.buttons.Button href={{ url_for("setup.libraries") }} error={{ form.errors }}>Skip</ui.buttons.Button>{% endif %}
+                {% if skippable %}<ui.buttons.Button href={{ url_for("setup.libraries") }}>Skip</ui.buttons.Button>{% endif %}
                 <ui.forms.Submit primary error={{ form.errors }} form={{ form }} />
             </div>
         </div>

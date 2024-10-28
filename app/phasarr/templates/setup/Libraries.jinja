@@ -1,14 +1,11 @@
 {#def
+    skippable: bool = False,
     form
 #}
 
 <setup.Setup>
     <form action="" method="post" novalidate>
         {{ form.hidden_tag() }}
-
-        {# <div class="flex items-center gap-2 mb-12">
-            <hr class="grow"><h2 class="text-md">Authentication</h2><hr class="grow">
-        </div> #}
         
         <div class="
             py-8 leading-6 space-y-8 sm:leading-7
@@ -21,6 +18,7 @@
             <ui.buttons.Button href={{ url_for("setup.authentication") }}>Back</ui.buttons.Button>
             <div class="flex gap-2 items-center">
                 {% if form.errors %}<p class="text-error">Correct errors before you try again.</p>{% endif %}
+                {% if skippable %}<ui.buttons.Button href={{ url_for("setup.libraries") }}>Skip</ui.buttons.Button>{% endif %}
                 <ui.forms.Submit primary error={{ form.errors }} form={{ form }} />
             </div>
         </div>
