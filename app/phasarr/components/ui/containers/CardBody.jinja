@@ -1,5 +1,7 @@
-<div className="flex grow max-h-full">
-    <div className="grow max-h-full max-w-full">
-        {{ content }}
-    </div>
+{#def
+    additional_class: string = ""
+#}
+
+<div class="px-10 py-5 {{ additional_class }}">
+    {{ content }}
 </div>

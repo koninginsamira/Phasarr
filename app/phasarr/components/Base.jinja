@@ -1,9 +1,7 @@
-{#def
-    title: str = "",
-    messages: [str] = []
-#}
-
 {#css ../css/light.css, ../css/dark.css, ../css/main.css #}
+
+{%- set title = attrs.get("title", "") %}
+{%- set messages = attrs.get("messages", []) %}
 
 <!DOCTYPE html>
 <html lang="en">

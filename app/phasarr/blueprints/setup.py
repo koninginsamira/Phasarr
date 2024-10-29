@@ -73,6 +73,7 @@ def authentication():
     
     return catalog.render(
         "setup.Authentication",
+        stage_name="Authentication",
         skippable=edit_user and edit_auth_mode,
         form=form
     )
@@ -97,6 +98,7 @@ def libraries():
     
     return catalog.render(
         "setup.Libraries",
+        stage_name="Libraries",
         form=form
     )
 
@@ -115,5 +117,6 @@ def download():
     
     return catalog.render(
         "setup.Download",
+        stage_name="Download",
         form=form
     )
