@@ -1,9 +1,9 @@
 {%- set stage_name = attrs.get("stage_name") %}
 
 <Base _attrs={{ attrs }}>
-    <ui.containers.Card additional_class="absolute-center w-[40rem]">
+    <ui.containers.card.Card additional_class="absolute-center w-[40rem]">
         <h1 class="absolute left-0 -top-36 text-9xl font-thin text-primary">Setup</h1>
-        <ui.containers.CardBody additional_class="px-20">
+        <ui.containers.card.CardBody additional_class="px-20">
 
             <h2 class="mt-10 mb-12 font-thin text-6xl text-center text-primary">
                 {{ stage_name }}
@@ -11,6 +11,6 @@
 
             {{ content }}
 
-        </ui.containers.CardBody>
-    </ui.containers.Card>
+        </ui.containers.card.CardBody>
+    </ui.containers.card.Card>
 </Base>
