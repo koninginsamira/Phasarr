@@ -8,6 +8,8 @@
     <head>
         <meta charset="UTF-8">
 
+        <ui.images.Favicon application_name="Phasarr" image_path="/static/images/" />
+
         {% if title %}
             <title>{{ title }} - Phasarr</title>
         {% else %}
@@ -18,9 +20,10 @@
 
         <script>let FF_FOUC_FIX;</script>
     </head>
-    <body class="min-h-screen bg-surface-variant">
-        <h1 class="text-center text-primary">Phasarr!!</h1>
-        <hr>
+    <body class="min-h-screen bg-primary-container text-on-primary-container">
+        <ui.containers.Container backgroundClass="bg-surface text-on-surface">
+            <p>Test</p>
+        </ui.containers.Container>
 
         {% with messages = get_flashed_messages() %}
             {% if messages %}
