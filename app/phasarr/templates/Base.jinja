@@ -22,19 +22,24 @@
     </head>
     <body class="min-h-screen bg-primary-container text-on-primary-container">
         <ui.containers.Container backgroundClass="bg-surface text-on-surface">
-            <p>Test</p>
+            <div class="flex flex-row items-center">
+                <img src="/static/images/favicon.svg" alt="Phasarr logo" class="w-12 h-12 m-2" />
+                <p class="mx-auto">Test</p>
+            </div>
         </ui.containers.Container>
 
-        {% with messages = get_flashed_messages() %}
-            {% if messages %}
-            <ul>
-                {% for message in messages %}
-                    <li>{{ message }}</li>
-                {% endfor %}
-            </ul>
-            {% endif %}
-        {% endwith %}
+        <div>
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                <ul>
+                    {% for message in messages %}
+                        <li>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+            {% endwith %}
 
-        {{ content }}
+            {{ content }}
+        </div>
     </body>
 </html>
