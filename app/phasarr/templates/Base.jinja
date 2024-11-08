@@ -1,7 +1,14 @@
-{#css ../css/light.css, ../css/dark.css, ../css/main.css #}
+{#def
+    title: str = ""
+#}
 
-{%- set title = attrs.get("title", "") %}
-{%- set messages = attrs.get("messages", []) %}
+{#css 
+    ../css/light.css, ../css/dark.css,
+    ../css/main.css,
+    ../fontawesome/css/fontawesome.min.css,
+    ../fontawesome/css/brands.min.css,
+    ../fontawesome/css/solid.min.css
+#}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -20,25 +27,25 @@
 
         <script>let FF_FOUC_FIX;</script>
     </head>
-    <body class="min-h-screen bg-primary-container text-on-primary-container">
-        <ui.containers.Container backgroundClass="bg-surface text-on-surface">
+    <body class="min-h-screen flex flex-col bg-primary-container text-on-primary-container font-afacad">
+        <ui.containers.Container backgroundClass="bg-surface text-on-surface border-b border-primary">
             <div class="flex flex-row items-center">
                 <img src="/static/images/favicon.svg" alt="Phasarr logo" class="w-12 h-12 m-2" />
                 <p class="mx-auto">Test</p>
             </div>
         </ui.containers.Container>
 
-        <div>
-            {% with messages = get_flashed_messages() %}
-                {% if messages %}
-                <ul>
-                    {% for message in messages %}
-                        <li>{{ message }}</li>
-                    {% endfor %}
-                </ul>
-                {% endif %}
-            {% endwith %}
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            <ul>
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+        {% endwith %}
 
+        <div class="grow flex">
             {{ content }}
         </div>
     </body>
