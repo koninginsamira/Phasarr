@@ -59,6 +59,10 @@ module.exports = {
                 'surface-container-high': 'rgb(var(--surface-container-high) / <alpha-value>)',
                 'surface-container-highest': 'rgb(var(--surface-container-highest) / <alpha-value>)'
             },
+
+            fontFamily: {
+                'afacad': ['"Afacad"', 'serif']
+            },
             
             backgroundImage: {
                 'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
