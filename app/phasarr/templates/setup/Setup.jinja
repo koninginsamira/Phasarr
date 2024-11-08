@@ -1,16 +1,69 @@
-{%- set stage_name = attrs.get("stage_name") %}
+{#def
+    title: str = "",
 
-<Base _attrs={{ attrs }}>
-    <ui.containers.card.Card additional_class="absolute-center w-[40rem]">
-        <h1 class="absolute left-0 -top-36 text-9xl font-thin text-primary">Setup</h1>
-        <ui.containers.card.CardBody additional_class="px-20">
+    current_stage: str,
+    stages: dict
+#}
 
-            <h2 class="mt-10 mb-12 font-thin text-6xl text-center text-primary">
-                {{ stage_name }}
-            </h2>
+{%- set ns = namespace(previous_skippable=1) %}
 
-            {{ content }}
+<Base title={{ title }}>
+    <div class="grow flex justify-center items-center">
+        <div class="w-11/12 sm:w-[40rem] mt-5 mb-20">
+            <div class="relative">
+                <div class="
+                    w-full
+                    p-5
+                    flex justify-between items-center
+                ">
+                    <h1 class="-mt-7 text-8xl leading-none select-none">Setup</h1>
+                    <div class="flex flex-row items-center gap-4">
+                        {% for key, stage in stages.items() %}
+                            <a
+                                href="{{ url_for(stage['url']) }}"
+                                class="
+                                    size-10
+                                    p-2 rounded-full
+                                    {% if key == current_stage %}
+                                        outline outline-4 outline-on-primary-container outline-offset-4
+                                        pointer-events-none cursor-default
+                                    {% elif not ns.previous_skippable %}
+                                        pointer-events-none cursor-default
+                                    {% else %}
+                                        cursor-pointer
+                                    {% endif %}
+                                    hover:outline hover:outline-4 hover:outline-on-primary-container hover:outline-offset-4
+                                    bg-on-primary-container
+                                    text-container text-primary-container
+                                "
+                            >
+                                <i class="
+                                    fa-solid {{ stage['icon'] }}
+                                    text-relative
+                                    relative
+                                    w-full h-full
+                                    before:absolute-center
+                                "></i>
+                            </a>
 
-        </ui.containers.card.CardBody>
-    </ui.containers.card.Card>
+                            {% if not stage['skippable'] %}
+                                {% set ns.previous_skippable = 0 %}
+                            {% endif %}
+
+                            <hr class="last:hidden w-5 border-on-primary-container">
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <ui.containers.card.Card>
+                <ui.containers.card.CardBody additional_class="px-20">
+                    <h2 class="mt-10 mb-12 font-thin text-6xl text-center text-primary select-none">
+                        {{ stages[current_stage]["name"] }}
+                    </h2>
+
+                    {{ content }}
+                </ui.containers.card.CardBody>
+            </ui.containers.card.Card>
+        </div>
+    </div>
 </Base>

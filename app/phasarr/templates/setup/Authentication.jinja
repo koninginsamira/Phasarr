@@ -1,9 +1,14 @@
 {#def
+    title: str = "",
+
+    current_stage: str,
+    stages: dict,
+
     skippable: bool = False,
     form
 #}
 
-<setup.Setup _attrs={{ attrs }}>
+<setup.Setup current_stage={{ current_stage }} stages={{ stages }}>
     <form action="" method="post" novalidate>
         {{ form.hidden_tag() }}
 
@@ -22,7 +27,7 @@
             <div class="flex justify-end my-5">
                 <div class="flex gap-2 items-center">
                     {% if form.errors %}<p class="text-sm text-error">Correct errors before you try again.</p>{% endif %}
-                    {% if skippable %}<ui.buttons.Button href={{ url_for("setup.libraries") }}>Skip</ui.buttons.Button>{% endif %}
+                    {% if stages[current_stage]["skippable"] %}<ui.buttons.Button href={{ url_for("setup.libraries") }}>Skip</ui.buttons.Button>{% endif %}
                     <ui.forms.Submit primary error={{ form.errors }} form={{ form }} />
                 </div>
             </div>

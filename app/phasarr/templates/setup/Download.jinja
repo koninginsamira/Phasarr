@@ -1,8 +1,13 @@
 {#def
+    title: str = "",
+
+    current_stage: str,
+    stages: dict,
+
     form
 #}
 
-<setup.Setup _attrs={{ attrs }}>
+<setup.Setup current_stage={{ current_stage }} stages={{ stages }}>
     <form action="" method="post" novalidate>
         {{ form.hidden_tag() }}
         
