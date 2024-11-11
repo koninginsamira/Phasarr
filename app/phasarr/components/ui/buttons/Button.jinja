@@ -4,6 +4,8 @@
     custom: bool = False,
     variant: bool = False,
     primary: bool = False,
+    secondary: bool = False,
+    tertiary: bool = False,
     error: bool = False,
     transparent: bool = False,
     disabled: bool = False,
@@ -12,6 +14,52 @@
 
     additional_class: str = ""
 #}
+
+{% set button_class = "" %}
+
+{% if error %}
+    {% set button_class = "
+        bg-error
+        text-on-error
+        outline-error
+    " + ("bg-transparent text-error" if active else "hover:bg-transparent hover:text-error") %}
+{% elif primary %}
+    {% set button_class = "
+        bg-primary
+        text-on-primary
+        outline-primary
+    " + ("bg-transparent text-primary" if active else "hover:bg-transparent hover:text-primary") %}
+{% elif secondary %}
+    {% set button_class = "
+        bg-secondary
+        text-on-secondary
+        outline-secondary
+    " + ("bg-transparent text-secondary" if active else "hover:bg-transparent hover:text-secondary") %}
+{% elif tertiary %}
+    {% set button_class = "
+        bg-tertiary
+        text-on-tertiary
+        outline-tertiary
+    " + ("bg-transparent text-tertiary" if active else "hover:bg-transparent hover:text-tertiary") %}
+{% elif transparent %}
+    {% set button_class = "
+        bg-transparent
+        text-on-surface
+        outline-on-surface
+    " %}
+{% elif variant %}
+    {% set button_class = "
+        bg-surface-variant
+        text-on-surface-variant
+        outline-on-surface-variant
+    " %}
+{% elif not custom %}
+    {% set button_class = "
+        bg-surface
+        text-on-surface
+        outline-on-surface
+    " %}
+{% endif %}
 
 <a href="{{ href }}" class='{{ "
     px-5 py-2.5
@@ -27,30 +75,7 @@
         )
     ) +
 
-    (("
-        bg-error
-        text-on-error
-        outline-error
-    " + ("bg-transparent text-error" if active else "hover:bg-transparent hover:text-error")
-    if error else ("
-        bg-primary
-        text-on-primary
-        outline-primary
-    " + ("bg-transparent text-error" if active else "hover:bg-transparent hover:text-primary")
-    if primary else ("
-        bg-transparent
-        text-on-surface
-        outline-on-surface
-    " if transparent else ("
-        bg-surface-variant
-        text-on-surface-variant
-        outline-on-surface-variant
-    ") if variant else ("
-        bg-surface
-        text-on-surface
-        outline-on-surface
-    ")))) if not custom) +
-
+    button_class +
     additional_class
 }}'>
     {{ content }}
