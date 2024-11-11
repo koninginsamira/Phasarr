@@ -1,3 +1,4 @@
+import os
 from phasarr.classes.form import Form
 import sqlalchemy as sql
 
@@ -36,7 +37,9 @@ class AuthSetupForm(Form):
         self.auth_method.validators = [required_unless_edit_auth_mode]
 
     def validate_username(self, username: Field):
-        if self.edit_user and username.data != self.previous_username.data:
+        different_username = username.data != self.previous_username.data
+
+        if self.edit_user and different_username:
             user = db.session.scalar(sql.select(User).where(
                 User.username == username.data))
             if user is not None:
@@ -44,7 +47,18 @@ class AuthSetupForm(Form):
         
 
 class LibrariesSetupForm(Form):
-    submit = SubmitField("Save and continue")
+    name = StringField("Name")
+    path = HiddenField("Path", validators=[DataRequired()])
+    submit = SubmitField("Add")
+
+    def validate_path(self, path: Field):
+        if os.path.isdir(path.data):
+            return
+        elif os.path.isfile(path.data):
+            raise ValidationError("Please choose a folder, not a file.")
+        else:
+            raise ValidationError("Please choose an existing folder, or check the error log.")
+
 
 class DownloadSetupForm(Form):
     submit = SubmitField("Finish")

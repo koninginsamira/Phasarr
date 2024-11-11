@@ -5,7 +5,9 @@
     stages: dict,
 
     skippable: bool = False,
-    form
+    form,
+    dirs,
+    libraries
 #}
 
 <setup.Setup current_stage={{ current_stage }} stages={{ stages }}>
@@ -13,25 +15,77 @@
         {{ form.hidden_tag() }}
 
         <div class="flex flex-col gap-8">
-            
-            {# <div class="flex flex-col gap-8">
-                
-            </div> #}
-
-            <ui.containers.card.Card variant additional_class="p-2">
-                <ui.containers.card.Card variant>
+            <div class="flex flex-col gap-4 max-h-80">
+                {% if libraries %}
+                    {% for library in libraries %}
+                        <ui.containers.card.Card secondary>
+                    <ui.containers.card.CardBody additional_class="select-none">
+                        <div class="flex flex-col gap-2">
+                            {{ library.name }}
+                            <div class="flex items-center gap-2">
+                                <i class="fa-regular fa-folder"></i>{{ library.path }}
+                            </div>
+                        </div>
+                    </ui.containers.card.CardBody>
                 </ui.containers.card.Card>
-                <ui.buttons.Button additional_class="w-full">
-                    <p class="text-4xl">+</p>
-                </ui.buttons.Button>
-            </ui.containers.card.Card>
+                    {% endfor %}
+                {% endif %}
+                <ui.containers.card.Card secondary>
+                    <ui.containers.card.CardBody additional_class="select-none">
+                        <div class="flex flex-col gap-2">
+                            █████
+                            <div class="flex items-center gap-2">
+                                <i class="fa-regular fa-folder"></i>/ █████ / ██████████
+                            </div>
+                        </div>
+                    </ui.containers.card.CardBody>
+                </ui.containers.card.Card>
+            </div>
+            
+            <div class="flex flex-col gap-4">
+                <ui.forms.InputBox field={{ form.name }} />
+
+                <div class="relative">
+                    <div class="
+                        placeholder-transparent
+                        h-10 w-full
+                        px-4
+                        bg-transparent
+                        rounded-lg outline outline-1 outline-offset-[-1px]
+                        {% if form.path.errors %}
+                            text-error outline-error focus:outline-error
+                        {% else %}
+                            text-on-surface outline-on-surface focus:outline-primary
+                        {% endif %}
+                    ">
+                        TEST
+                    </div>
+                    {{ form.path.label(
+                        class_="
+                            absolute
+                            left-3 -top-3
+                            px-1
+                            bg-surface
+                            text-sm select-none " +
+                            ("text-error "
+                                if form.path.errors else
+                            "text-on-surface ") +
+                            ("after:content-[''] after:ml-0.5 after:text-primary"
+                                if form.path | is_required else
+                            "after:content-['(optional)'] after:ml-1")
+                    ) }}
+                </div>
+
+                <div class="flex justify-end items-center gap-2 my-5">
+                    {% if form.errors %}<p class="text-sm text-error">Correct errors before you try again.</p>{% endif %}
+                    <ui.forms.Submit secondary error={{ form.errors }} form={{ form }} />
+                </div>
+            </div>
 
             <div class="flex justify-between my-5">
                 <ui.buttons.Button href={{ url_for("setup.authentication") }}>Back</ui.buttons.Button>
                 <div class="flex gap-2 items-center">
-                    {% if form.errors %}<p class="text-sm text-error">Correct errors before you try again.</p>{% endif %}
-                    {% if stages[current_stage]["skippable"] %}<ui.buttons.Button href={{ url_for("setup.libraries") }}>Skip</ui.buttons.Button>{% endif %}
-                    <ui.forms.Submit primary error={{ form.errors }} form={{ form }} />
+                    <ui.buttons.Button primary href={{ url_for("setup.download") }}>Continue</ui.buttons.Button>
                 </div>
             </div>
         </div>

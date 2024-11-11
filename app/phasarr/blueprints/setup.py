@@ -139,9 +139,8 @@ def authentication():
 def libraries():
     form: LibrariesSetupForm = LibrariesSetupForm()
 
-    current_user
-
     dirs = get_dirs('.')
+    libraries = current_user.libraries_created
 
     if form.validate_on_submit():
         new_libraries = []
@@ -153,14 +152,15 @@ def libraries():
 
         config.setup.stage = 2
         
-        flash("Libraries have been configured!")
-        return redirect(url_for("setup.download"))
+        flash("Library has been added!")
     
     return catalog.render(
         "setup.Libraries",
         current_stage="libraries",
         stages=stages,
-        form=form
+        form=form,
+        dirs=dirs,
+        libraries=libraries
     )
 
 
