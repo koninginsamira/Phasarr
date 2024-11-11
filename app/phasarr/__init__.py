@@ -1,3 +1,5 @@
+from flask_login import LoginManager
+
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from flask import Flask
@@ -28,6 +30,7 @@ migrate = Migrate(app, db)
 init_database(app, db)
 
 http_auth = HTTPBasicAuth()
+login = LoginManager(app)
 
 if not is_local:
     init_gunicorn_logging(app)
