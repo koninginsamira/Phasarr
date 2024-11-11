@@ -7,7 +7,7 @@ from flask_migrate import init, migrate, upgrade
 
 def init_database(app: Flask, db):
     with app.app_context():
-        from phasarr.models import user
+        import phasarr.models
         db.create_all()
 
 
