@@ -2,6 +2,8 @@
     custom: bool = False,
     variant: bool = False,
     primary: bool = False,
+    secondary: bool = False,
+    tertiary: bool = False,
     transparent: bool = False,
 
     additional_class: str = ""
@@ -11,24 +13,30 @@
     flex flex-col gap-5
     rounded-lg outline outline-1
 
-    {% if not custom %}
-        {% if variant %}
-            bg-surface-variant
-            text-on-surface-variant
-            outline-primary
-        {% elif primary %}
-            bg-primary
-            text-on-primary
-            outline-on-surface
-        {% elif transparent %}
-            bg-transparent
-            text-on-surface
-            outline-transparent
-        {% else %}
-            bg-surface
-            text-on-surface
-            outline-primary
-        {% endif %}
+    {% if variant %}
+        bg-surface-variant
+        text-on-surface-variant
+        outline-on-surface-variant
+    {% elif primary %}
+        bg-primary-container
+        text-on-primary-container
+        outline-on-primary-container
+    {% elif secondary %}
+        bg-secondary-container
+        text-on-secondary-container
+        outline-on-secondary-container
+    {% elif tertiary %}
+        bg-tertiary-container
+        text-on-tertiary-container
+        outline-on-tertiary-container
+    {% elif transparent %}
+        bg-transparent
+        text-on-surface
+        outline-transparent
+    {% elif not custom %}
+        bg-surface
+        text-on-surface
+        outline-on-surface
     {% endif %}
 
     {{ additional_class }}
