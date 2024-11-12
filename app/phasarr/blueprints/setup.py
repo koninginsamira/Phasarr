@@ -6,7 +6,7 @@ from flask_login import current_user, login_user
 from flask import Blueprint, flash, redirect, request, url_for
 
 from phasarr import db, config, catalog, app
-from phasarr.decorators.auth import login_required
+from phasarr.decorators.auth import login_required, login_required_if_user_exists
 from phasarr.models.user import User
 from phasarr.helpers.setup import redirect_setup
 from phasarr.forms.setup import AuthSetupForm, DownloadSetupForm, LibrariesSetupForm
@@ -85,6 +85,7 @@ def setup():
 
 
 @setup_app.route("/authentication", methods=["GET", "POST"])
+@login_required_if_user_exists
 def authentication():
     user = current_user
     auth_mode = config.authentication.method
@@ -153,7 +154,6 @@ def libraries():
 
     dirs = get_dirs('.')
     libraries = current_user.libraries_created
-    # libraries = []
     
     return catalog.render(
         "setup.Libraries",

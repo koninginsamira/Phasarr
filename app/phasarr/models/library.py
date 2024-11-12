@@ -14,6 +14,6 @@ class Library(db.Model):
 
     created_by_id: Mapped[int] = mapped_column(
         ForeignKey(User.id), index=True, nullable=False)
-    created_by: Mapped[User] = relationship(back_populates='libraries_created')
+    created_by: Mapped[User] = relationship("User", back_populates='libraries_created')
     created_at: Mapped[datetime] = mapped_column(
         index=True, nullable=False, default=lambda: datetime.now(timezone.utc))

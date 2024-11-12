@@ -1,9 +1,11 @@
-from functools import wraps
-
 import flask_login
 
+from functools import wraps
 from flask_login import current_user
-from phasarr import http_auth, config
+
+from phasarr import http_auth, config, db
+from phasarr.helpers.sql import get_row_count_from
+from phasarr.models.user import User
 
 
 def login_required(func):
@@ -21,6 +23,19 @@ def login_required(func):
                     raise ValueError(
                         "Authentication mode '" + auth_mode + "' is not supported. \
                             Remove the config file to generate a correct one.")
+        else:
+            return func(*args, **kwargs)
+        
+    return wrapper
+
+
+def login_required_if_user_exists(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        user_exists = get_row_count_from(db, User) > 0
+
+        if user_exists:
+            return login_required(func)(*args, **kwargs)
         else:
             return func(*args, **kwargs)
         
