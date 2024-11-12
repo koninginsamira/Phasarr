@@ -49,18 +49,32 @@
                     <div class="relative">
                         <div class="
                             placeholder-transparent
-                            w-full min-h-10 h-80
-                            p-4
+                            flex flex-col
+                            w-full
                             bg-transparent
                             rounded-lg outline outline-1 outline-offset-[-1px]
-                            overflow-y-auto
                             {% if form.path.errors %}
                                 text-error outline-error focus:outline-error
                             {% else %}
                                 text-on-surface outline-on-surface focus:outline-primary
                             {% endif %}
                         ">
-                            <files.manager.FileManager tree={{ dirs }} />
+                            <p id="{{ form.path.id }}_value" class="
+                                px-6 pt-4 pb-2
+                                bg-surface
+                            ">/</p>
+
+                            <div class="h-64 px-4 overflow-y-auto">
+                                <files.manager.FileManager tree={{ dirs }}
+                                    on_open="selectDir" on_leaf_click="selectDir" />
+                            </div>
+                            
+                            <script>
+                                function selectDir(id) {
+                                    document.getElementById("{{ form.path.id }}").value = id;
+                                    document.getElementById("{{ form.path.id }}_value").innerHTML = id;
+                                }
+                            </script>
                         </div>
                         {{ form.path.label(
                             class_="

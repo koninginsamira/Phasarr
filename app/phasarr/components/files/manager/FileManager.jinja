@@ -1,18 +1,19 @@
 {#def
     tree: dict,
-    parent_id: str = "root",
+    parent_id: str = "",
+    on_open: str = "",
     on_leaf_click: str = ""
 #}
 
 <ul id="{{ parent_id }}_content" class="
     flex flex-col gap-2
-    {% if parent_id != 'root' %}
+    {% if parent_id %}
         h-0 scale-y-0 pl-8
         origin-top transition-transform
     {% endif %}
 ">
     {% for name, content in tree.items() %}
-        {% set id = parent_id + "_" + name %}
+        {% set id = parent_id + "/" + name %}
         <li id="{{ id }}" class="flex flex-col">
             <div
                 class="
@@ -25,7 +26,7 @@
                 {% if content %}
                     onclick="openDir('{{ id }}')"
                 {% elif on_leaf_click %}
-                    onclick="{{ on_leaf_click }}"
+                    onclick="{{ on_leaf_click }}('{{ id }}')"
                 {% endif %}
             >
                 <i id="{{ id }}_icon" class="w-4 fa-solid fa-folder-closed"></i>{{ name }}
@@ -34,7 +35,7 @@
         </li>
     {% endfor %}
 
-    {% if parent_id == 'root' %}
+    {% if not parent_id %}
         <script>
             function openDir(id) {
                 const icon = document.getElementById(id + "_icon");
@@ -48,6 +49,10 @@
                 content.classList.toggle("scale-y-0");
                 content.classList.toggle("scale-y-100");
                 content.classList.toggle("block");
+
+                {% if on_open %}
+                    {{ on_open }}(id)
+                {% endif %}
             }
         </script>
     {% endif %}

@@ -1,3 +1,4 @@
+from phasarr.models.library import Library
 import sqlalchemy as sql
 
 from logging import Logger
@@ -139,20 +140,20 @@ def authentication():
 def libraries():
     form: LibrariesSetupForm = LibrariesSetupForm()
 
-    dirs = get_dirs('.')
-    libraries = current_user.libraries_created
-
     if form.validate_on_submit():
-        new_libraries = []
-        
-        # User(username=form.username.data)
-        # new_user.set_password(form.password.data)
-        # db.session.add(new_user)
-        # db.session.commit()
+        new_name = form.name.data
+        new_path = form.path.data
+        new_library = Library(
+            name=new_name, path=new_path, created_by_id=current_user.id)
 
-        config.setup.stage = 2
+        db.session.add(new_library)
+        db.session.commit()
         
         flash("Library has been added!")
+
+    dirs = get_dirs('.')
+    libraries = current_user.libraries_created
+    # libraries = []
     
     return catalog.render(
         "setup.Libraries",
@@ -168,6 +169,8 @@ def libraries():
 @login_required
 def download():
     form: DownloadSetupForm = DownloadSetupForm()
+
+    config.setup.stage = 2
 
     if form.validate_on_submit():
         # config.authentication.method = form.auth_method.data
