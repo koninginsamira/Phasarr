@@ -10,7 +10,8 @@
     transparent: bool = False,
     disabled: bool = False,
 
-    href: str = "#",
+    href: str = "",
+    onclick: str = "",
 
     additional_class: str = ""
 #}
@@ -61,7 +62,10 @@
     " %}
 {% endif %}
 
-<a href="{{ href }}" class='{{ "
+<a 
+    {% if href %}href="{{ href }}"{% endif %}
+    {% if onclick %}onclick="{{ onclick }}"{% endif %}
+    class='{{ "
     px-5 py-2.5
     rounded-lg
     font-medium text-md text-center

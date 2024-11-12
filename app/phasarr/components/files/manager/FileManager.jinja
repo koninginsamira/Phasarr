@@ -1,0 +1,54 @@
+{#def
+    tree: dict,
+    parent_id: str = "root",
+    on_leaf_click: str = ""
+#}
+
+<ul id="{{ parent_id }}_content" class="
+    flex flex-col gap-2
+    {% if parent_id != 'root' %}
+        h-0 scale-y-0 pl-8
+        origin-top transition-transform
+    {% endif %}
+">
+    {% for name, content in tree.items() %}
+        {% set id = parent_id + "_" + name %}
+        <li id="{{ id }}" class="flex flex-col">
+            <div
+                class="
+                    flex items-center gap-2
+                    px-4 py-2
+                    rounded-lg hover:bg-surface-variant
+                    select-none
+                    {% if content or on_leaf_click %} cursor-pointer {% endif %}
+                "
+                {% if content %}
+                    onclick="openDir('{{ id }}')"
+                {% elif on_leaf_click %}
+                    onclick="{{ on_leaf_click }}"
+                {% endif %}
+            >
+                <i id="{{ id }}_icon" class="w-4 fa-solid fa-folder-closed"></i>{{ name }}
+            </div>
+            <files.manager.FileManager tree={{ content }} parent_id={{ id }} on_leaf_click={{ on_leaf_click }} />
+        </li>
+    {% endfor %}
+
+    {% if parent_id == 'root' %}
+        <script>
+            function openDir(id) {
+                const icon = document.getElementById(id + "_icon");
+                const content = document.getElementById(id + "_content");
+
+                icon.classList.toggle("fa-folder-closed");
+                icon.classList.toggle("fa-folder-open");
+                
+                content.classList.toggle("h-0");
+                content.classList.toggle("h-auto");
+                content.classList.toggle("scale-y-0");
+                content.classList.toggle("scale-y-100");
+                content.classList.toggle("block");
+            }
+        </script>
+    {% endif %}
+</ul>
