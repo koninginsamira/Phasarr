@@ -6,8 +6,8 @@
 
     skippable: bool = False,
     form,
-    dirs,
-    libraries
+    dirs: dict,
+    libraries: list
 #}
 
 <setup.Setup current_stage={{ current_stage }} stages={{ stages }}>
@@ -38,96 +38,16 @@
                         </ui.containers.card.CardBody>
                     </ui.containers.card.Card>
                 {% endfor %}
-                <script>
-                    function navigateTo(path) {
-                        const route = path.split("/");
-
-                        let currentPath = "";
-                        for (let i = 1; i < route.length - 1; i++) {
-                            currentPath = currentPath + "/" + route[i];
-                            openDir(currentPath);
-                        }
-                        selectDir(path);
-
-                        const animations = document.getAnimations();
-                        Promise.all(animations.map(animation => animation.finished))
-                            .then(() => {
-                                document.getElementById(path).scrollIntoView({
-                                    behavior: "smooth",
-                                    block: "center"
-                                });
-                            });
-                        
-                    }
-                </script>
             </div>
             
             <div class="flex flex-col gap-4">
-                <ui.forms.InputBox field={{ form.name }} />
+                <form.input.InputBox field={{ form.name }} />
 
-                <div class="flex flex-col gap-1">
-                    <div class="relative">
-                        <div class="
-                            placeholder-transparent
-                            flex flex-col
-                            w-full
-                            bg-transparent
-                            rounded-lg outline outline-1 outline-offset-[-1px]
-                            {% if form.path.errors %}
-                                text-error outline-error focus:outline-error
-                            {% else %}
-                                text-on-surface outline-on-surface focus:outline-primary
-                            {% endif %}
-                        ">
-                            <p id="{{ form.path.id }}_value" class="
-                                px-6 pt-4 pb-2
-                                bg-surface
-                            ">/</p>
-
-                            <div id="file_manager" class="h-64 px-4 pb-4 overflow-y-auto">
-                                <files.manager.FileManager tree={{ dirs }}
-                                    on_open="selectDir" on_leaf_click="selectDir" />
-                            </div>
-                            
-                            <script>
-                                function selectDir(id) {
-                                    const fileManager = document.getElementById("file_manager");
-
-                                    fileManager.querySelectorAll('[id$="_name"]').forEach((el) => {
-                                        el.classList.remove("underline");
-                                    });
-                                    document.getElementById(id + "_name").classList.add("underline");
-
-                                    document.getElementById("{{ form.path.id }}").value = id;
-                                    document.getElementById("{{ form.path.id }}_value").innerHTML = id;
-                                }
-                            </script>
-                        </div>
-                        {{ form.path.label(
-                            class_="
-                                absolute
-                                left-3 -top-3
-                                px-1
-                                bg-surface
-                                text-sm select-none " +
-                                ("text-error "
-                                    if form.path.errors else
-                                "text-on-surface ") +
-                                ("after:content-[''] after:ml-0.5 after:text-primary"
-                                    if form.path | is_required else
-                                "after:content-['(optional)'] after:ml-1")
-                        ) }}
-                    </div>
-                    <div class="px-4 h-0 overflow-visible">
-                        {% for error in form.path.errors %}
-                            <span class="text-sm text-error">{{ error }}</span>
-                        {% endfor %}
-                    </div>
-                </div>
+                <form.tree.TreeSelector field={{ form.path }} tree={{ dirs }} />
 
                 <div class="flex justify-end items-center gap-2 my-5">
                     {% if form.errors %}<p class="text-sm text-error">Correct errors before you try again.</p>{% endif %}
-                    <ui.forms.Submit secondary error={{ form.errors }} form={{ form }} />
+                    <form.submit.Submit secondary error={{ form.errors }} form={{ form }} />
                 </div>
             </div>
 

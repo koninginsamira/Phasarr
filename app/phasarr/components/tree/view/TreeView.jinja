@@ -1,19 +1,22 @@
 {#def
+    __parent_id: str = "",
     tree: dict,
-    parent_id: str = "",
-    on_open: str = "",
-    on_leaf_click: str = ""
+    on_branch_open: str = "",
+    on_leaf_click: str = "",
+    on_navigate: str = ""
 #}
 
-<ul id="{{ parent_id }}_content" class="
+{%- set separator = "/" %}
+
+<ul id="{{ __parent_id }}_content" class="
     flex flex-col gap-2
-    {% if parent_id %}
+    {% if __parent_id %}
         h-0 scale-y-0 pl-8
         origin-top transition-transform
     {% endif %}
 ">
     {% for name, content in tree.items() %}
-        {% set id = parent_id + "/" + name %}
+        {% set id = __parent_id + separator + name %}
         <li id="{{ id }}" class="flex flex-col">
             <div
                 class="
@@ -32,11 +35,11 @@
                 <i id="{{ id }}_icon" class="w-4 fa-solid fa-folder-closed"></i>
                 <p id="{{ id }}_name">{{ name }}</p>
             </div>
-            <files.manager.FileManager tree={{ content }} parent_id={{ id }} on_leaf_click={{ on_leaf_click }} />
+            <tree.view.TreeView tree={{ content }} __parent_id={{ id }} on_leaf_click={{ on_leaf_click }} />
         </li>
     {% endfor %}
 
-    {% if not parent_id %}
+    {% if not __parent_id %}
         <script>
             function openDir(id) {
                 const icon = document.getElementById(id + "_icon");
@@ -51,9 +54,31 @@
                 content.classList.toggle("scale-y-100");
                 content.classList.toggle("block");
 
-                {% if on_open %}
-                    {{ on_open }}(id)
+                {% if on_branch_open %}
+                    {{ on_branch_open }}(id)
                 {% endif %}
+            }
+
+            function navigateTo(id) {
+                const route = id.split("{{ separator }}");
+
+                let currentPos = "";
+                for (let i = 1; i < route.length - 1; i++) {
+                    currentPos = currentPos + "{{ separator }}" + route[i];
+                    openDir(currentPos);
+                }
+                {% if on_navigate %}
+                    {{ on_navigate }}(id);
+                {% endif %}
+
+                const animations = document.getAnimations();
+                Promise.all(animations.map(animation => animation.finished))
+                    .then(() => {
+                        document.getElementById(id).scrollIntoView({
+                            behavior: "smooth",
+                            block: "center"
+                        });
+                    });
             }
         </script>
     {% endif %}
