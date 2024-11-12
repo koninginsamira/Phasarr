@@ -29,7 +29,8 @@
                     onclick="{{ on_leaf_click }}('{{ id }}')"
                 {% endif %}
             >
-                <i id="{{ id }}_icon" class="w-4 fa-solid fa-folder-closed"></i>{{ name }}
+                <i id="{{ id }}_icon" class="w-4 fa-solid fa-folder-closed"></i>
+                <p id="{{ id }}_name">{{ name }}</p>
             </div>
             <files.manager.FileManager tree={{ content }} parent_id={{ id }} on_leaf_click={{ on_leaf_click }} />
         </li>
