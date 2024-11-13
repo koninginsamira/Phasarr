@@ -27,7 +27,7 @@
                     {% if content or on_leaf_click %} cursor-pointer {% endif %}
                 "
                 {% if content %}
-                    onclick="openDir('{{ id }}')"
+                    onclick="toggleBranch('{{ id }}')"
                 {% elif on_leaf_click %}
                     onclick="{{ on_leaf_click }}('{{ id }}')"
                 {% endif %}
@@ -41,18 +41,34 @@
 
     {% if not __parent_id %}
         <script>
-            function openDir(id) {
+            function toggleBranch(id, mode = "toggle") {
+                let action;
+
+                switch(mode) {
+                    case "open":
+                        action = "add";
+                        break;
+                    case "close":
+                        action = "remove";
+                        break;
+                    case "toggle":
+                        action = "toggle";
+                        break;
+                    default:
+                        throw new Error("Mode '" + mode + "' was not recognised!");
+                }
+
                 const icon = document.getElementById(id + "_icon");
                 const content = document.getElementById(id + "_content");
 
-                icon.classList.toggle("fa-folder-closed");
-                icon.classList.toggle("fa-folder-open");
+                icon.classList[action]("fa-folder-closed");
+                icon.classList[action]("fa-folder-open");
                 
-                content.classList.toggle("h-0");
-                content.classList.toggle("h-auto");
-                content.classList.toggle("scale-y-0");
-                content.classList.toggle("scale-y-100");
-                content.classList.toggle("block");
+                content.classList[action]("h-0");
+                content.classList[action]("h-auto");
+                content.classList[action]("scale-y-0");
+                content.classList[action]("scale-y-100");
+                content.classList[action]("block");
 
                 {% if on_branch_open %}
                     {{ on_branch_open }}(id)
@@ -65,7 +81,7 @@
                 let currentPos = "";
                 for (let i = 1; i < route.length - 1; i++) {
                     currentPos = currentPos + "{{ separator }}" + route[i];
-                    openDir(currentPos);
+                    toggleBranch(currentPos, "open");
                 }
                 {% if on_navigate %}
                     {{ on_navigate }}(id);
