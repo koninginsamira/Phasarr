@@ -10,7 +10,7 @@ class Library(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
 
     name: Mapped[str] = mapped_column(index=True)
-    path: Mapped[str] = mapped_column(nullable=False)
+    path: Mapped[str] = mapped_column(unique=True, nullable=False)
 
     created_by_id: Mapped[int] = mapped_column(
         ForeignKey(User.id), index=True, nullable=False)

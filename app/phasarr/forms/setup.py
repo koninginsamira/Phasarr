@@ -1,13 +1,13 @@
 import os
-from pathlib import Path
-from phasarr.classes.form import Form
 import sqlalchemy as sql
 
-from phasarr.models.user import User
 from wtforms import Field, HiddenField, PasswordField, SelectField, StringField, SubmitField, ValidationError
 from wtforms.validators import DataRequired, EqualTo, Optional
 
 from phasarr import db
+from phasarr.models.user import User
+from phasarr.models.library import Library
+from phasarr.classes.form import Form
 
 
 class AuthSetupForm(Form):
@@ -42,10 +42,10 @@ class AuthSetupForm(Form):
         is_different_username = new_username != self.previous_username.data
 
         if self.edit_user and is_different_username:
-            user = db.session.scalar(sql.select(User).where(
-                User.username == field.data))
-            if user is not None:
-                raise ValidationError("Please use a different username.")
+            user_exists = db.session.scalar(sql.select(User).where(
+                User.username == field.data)) is not None
+            if user_exists:
+                raise ValidationError("Username already exists. Please use a different username.")
         
 
 class LibrariesSetupForm(Form):
@@ -57,11 +57,19 @@ class LibrariesSetupForm(Form):
         path = "." + field.data
         
         if os.path.isdir(path):
-            return
+            pass
         elif os.path.isfile(path):
             raise ValidationError("Please choose a folder, not a file.")
         else:
             raise ValidationError("Please choose an existing folder, and make sure it is accessible.")
+        
+        # is_different_path = field.data != self.previous_username.data
+
+        # if self.edit_user and is_different_path:
+        path_exists = db.session.scalar(sql.select(Library).where(
+            Library.path == field.data)) is not None
+        if path_exists:
+            raise ValidationError("Library on this path already exists. Please use a different path.")
 
 
 class DownloadSetupForm(Form):
