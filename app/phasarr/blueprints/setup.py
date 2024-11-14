@@ -94,39 +94,40 @@ def authentication():
 
     form: AuthSetupForm = AuthSetupForm(edit_user=user_exists, edit_auth_mode=auth_mode_is_set)
 
-    if request.method == "GET":
-        if user_exists:
-            form.previous_username.data = current_user.username
-            form.username.data = current_user.username
-
-        if auth_mode_is_set:
-            form.auth_method.data = auth_mode
-
-    elif request.method == "POST":
-        if form.validate_on_submit():
-            new_username = form.username.data
-            new_password = form.password.data
-            new_auth_mode = form.auth_method.data
-
+    match request.method:
+        case "GET":
             if user_exists:
-                if new_username:
-                    user.username = new_username
-                if new_password:
+                form.previous_username.data = current_user.username
+                form.username.data = current_user.username
+
+            if auth_mode_is_set:
+                form.auth_method.data = auth_mode
+
+        case "POST":
+            if form.validate_on_submit():
+                new_username = form.username.data
+                new_password = form.password.data
+                new_auth_mode = form.auth_method.data
+
+                if user_exists:
+                    if new_username:
+                        user.username = new_username
+                    if new_password:
+                        user.set_password(new_password)
+                else:
+                    user = User(username=new_username)
                     user.set_password(new_password)
-            else:
-                user = User(username=new_username)
-                user.set_password(new_password)
-                db.session.add(user)
-            db.session.commit()
+                    db.session.add(user)
+                db.session.commit()
 
-            config.authentication.method = new_auth_mode
-            config.setup.stage = 1
+                config.authentication.method = new_auth_mode
+                config.setup.stage = 1
 
-            if not login_user(user):
-                Logger.error("New user could not be logged in.")
-            
-            flash("Authentication has been configured!")
-            return redirect(url_for("setup.libraries"))
+                if not login_user(user):
+                    Logger.error("New user could not be logged in.")
+                
+                flash("Authentication has been configured!")
+                return redirect(url_for("setup.libraries"))
     
     return catalog.render(
         "setup.Authentication",
@@ -141,17 +142,20 @@ def authentication():
 def libraries():
     form: LibrariesSetupForm = LibrariesSetupForm()
 
-    if form.validate_on_submit():
-        new_name = form.name.data
-        new_path = form.path.data
-        new_library = Library(
-            name=new_name, path=new_path, created_by_id=current_user.id)
+    match request.method:
+        case "POST":
+            if form.validate_on_submit():
+                new_name = form.name.data
+                new_path = form.path.data
+                new_library = Library(
+                    name=new_name, path=new_path, created_by_id=current_user.id)
 
-        db.session.add(new_library)
-        db.session.commit()
-        
-        flash("Library has been added!")
-
+                db.session.add(new_library)
+                db.session.commit()
+            
+                flash("Library has been added!")
+                form.clear()
+    
     dirs = get_dirs('.')
     libraries = current_user.libraries_created
     
