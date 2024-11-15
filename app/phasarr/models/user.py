@@ -11,8 +11,13 @@ class User(UserMixin, db.Model):
     username: Mapped[str] = mapped_column(unique=True, index=True, nullable=False)
     password_hash: Mapped[str] = mapped_column(nullable=False)
 
+    # created_at: 
+    # updated_at: 
+
     libraries_created: Mapped[list["Library"]] = relationship( # type: ignore (prevents circular import)
-        "Library", back_populates="created_by")
+        "Library", foreign_keys="Library.created_by_id", back_populates="created_by")
+    libraries_updated: Mapped[list["Library"]] = relationship( # type: ignore (prevents circular import)
+        "Library", foreign_keys="Library.updated_by_id", back_populates="updated_by")
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)

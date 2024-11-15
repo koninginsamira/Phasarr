@@ -10,51 +10,90 @@
     libraries: list
 #}
 
+{%- set ns = namespace(is_editing=(1 if form.id.data else 0)) %}
+{%- set no_libraries = False %}
+
 <setup.Setup current_stage={{ current_stage }} stages={{ stages }}>
     <form action="" method="post" novalidate>
         {{ form.hidden_tag() }}
 
-        <div class="flex flex-col gap-8">
-            <div class="flex flex-col gap-4 max-h-80">
-                {% if not libraries %}
-                    {% set libraries = [{ "name": "█████", "path": "/ █████ / ██████████" }] %}
-                {% endif %}
+        <div class="flex flex-col gap-4">
+            <div class="flex flex-col gap-6">
+                <div class="flex flex-col gap-4 max-h-80">
+                    {% if not libraries %}
+                        {% set no_libraries = True %}
+                        {% set libraries = [{ "id": "", "name": "█████", "path": "/ █████ / ██████████" }] %}
+                    {% endif %}
 
-                {% for library in libraries %}
-                    <ui.containers.card.Card secondary>
-                        <ui.containers.card.CardBody additional_class="select-none">
-                            <div class="flex flex-col">
-                                <p class="text-lg font-bold">
-                                    {{ library.name or library.path.split("/")[-1] }}
-                                </p>
-                                <a class="flex items-center gap-2">
-                                    <i class="fa-regular fa-folder"></i>
-                                    <p
-                                        class="hover:underline cursor-pointer"
-                                        onclick="navigateTo('{{ library.path }}')"
-                                    >{{ library.path }}</p>
-                                </a>
-                            </div>
-                        </ui.containers.card.CardBody>
-                    </ui.containers.card.Card>
-                {% endfor %}
-            </div>
-            
-            <div class="flex flex-col gap-4">
-                <form.input.InputBox field={{ form.name }} />
+                    {% for library in libraries %}
+                        {% set is_editing_this_library = form.id.data == library.id %}
 
-                <form.tree.TreeSelector field={{ form.path }} tree={{ dirs }} />
+                        <ui.containers.card.Card
+                            secondary
+                            additional_class={{ "bg-transparent" if is_editing_this_library else "" }}
+                        >
+                            <script>
+                                console.log(typeof {{ form.id.data }} + "/" + typeof {{ library.id }})
+                                console.log("{{ form.id.data }} / {{ library.id }}")
+                                console.log("{{ form.id.data == library.id }}")
+                                console.log("{{ is_editing_this_library }}")
+                            </script>
+                            <ui.containers.card.CardBody additional_class="select-none">
+                                <div class="flex flex-row items-center justify-between">
+                                    <div class="flex flex-col">
+                                        <p class="text-lg font-bold">
+                                            {{ library.name or library.path.split("/")[-1] }}
+                                        </p>
+                                        <a class="flex items-center gap-2">
+                                            <i class="fa-regular fa-folder"></i>
+                                            <p
+                                                {% if not no_libraries %}
+                                                    class="hover:underline cursor-pointer"
+                                                    onclick="navigateTo('{{ library.path }}')"
+                                                {% endif %}
+                                            >{{ library.path }}</p>
+                                        </a>
+                                    </div>
 
-                <div class="flex justify-end items-center gap-2 my-5">
-                    {% if form.errors %}<p class="text-sm text-error">Correct errors before you try again.</p>{% endif %}
-                    <form.submit.Submit secondary error={{ form.errors }} form={{ form }} />
+                                    {% if not no_libraries %}
+                                        <div class="flex flex-row gap-8 text-xl">
+                                            {% if not is_editing_this_library %}
+                                                <a class="cursor-pointer" href={{ url_for("setup.libraries", id=library.id) }}>
+                                                    <i class="fa-solid fa-pen"></i>
+                                                </a>
+                                            {% endif %}
+                                            <a class="cursor-pointer" href={{ url_for("setup.remove_libraries", id=library.id) }}>
+                                                <i class="fa-solid fa-trash-can"></i>
+                                            </a>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </ui.containers.card.CardBody>
+                        </ui.containers.card.Card>
+                    {% endfor %}
                 </div>
-            </div>
 
-            <div class="flex justify-between my-5">
-                <ui.buttons.Button href={{ url_for("setup.authentication") }}>Back</ui.buttons.Button>
-                <div class="flex gap-2 items-center">
-                    <ui.buttons.Button primary href={{ url_for("setup.download") }}>Continue</ui.buttons.Button>
+                <div class="flex flex-col gap-2">
+                    <h3 class="mx-auto my-4 text-4xl select-none">New library</h3>
+                    
+                    <div class="flex flex-col gap-4">
+                        <form.input.InputBox field={{ form.name }} />
+
+                        <form.tree.TreeSelector field={{ form.path }} tree={{ dirs }} />
+
+                        <div class="flex justify-end items-center gap-2 my-5">
+                            {% if form.errors %}<p class="text-sm text-error">Correct errors before you try again.</p>{% endif %}
+                            {% if ns.is_editing %}<ui.buttons.Button href={{ url_for("setup.libraries") }}>Cancel</ui.buttons.Button>{% endif %}
+                            <form.submit.Submit secondary error={{ form.errors }} form={{ form }} />
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex justify-between my-5">
+                    <ui.buttons.Button href={{ url_for("setup.authentication") }}>Back</ui.buttons.Button>
+                    <div class="flex gap-2 items-center">
+                        <ui.buttons.Button primary href={{ url_for("setup.download") }}>Continue</ui.buttons.Button>
+                    </div>
                 </div>
             </div>
         </div>

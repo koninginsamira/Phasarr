@@ -49,9 +49,23 @@ class AuthSetupForm(Form):
         
 
 class LibrariesSetupForm(Form):
+    edit: bool = False
+    
+    id = HiddenField()
     name = StringField("Name")
-    path = HiddenField("Path", validators=[DataRequired()])
+    previous_path = HiddenField()
+    path = HiddenField("Path")
     submit = SubmitField("Add")
+
+    def __init__(self, edit: bool = False, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        required_unless_edit = DataRequired() if not edit else Optional()
+
+        self.edit = edit
+
+        self.path.validators = [required_unless_edit]
+        self.submit.label.text = "Add" if not edit else "Update"
 
     def validate_path(self, field: Field):
         path = "." + field.data
@@ -63,13 +77,13 @@ class LibrariesSetupForm(Form):
         else:
             raise ValidationError("Please choose an existing folder, and make sure it is accessible.")
         
-        # is_different_path = field.data != self.previous_username.data
+        is_different_path = field.data != self.previous_path.data
 
-        # if self.edit_user and is_different_path:
-        path_exists = db.session.scalar(sql.select(Library).where(
-            Library.path == field.data)) is not None
-        if path_exists:
-            raise ValidationError("Library on this path already exists. Please use a different path.")
+        if self.edit and is_different_path:
+            path_exists = db.session.scalar(sql.select(Library).where(
+                Library.path == field.data)) is not None
+            if path_exists:
+                raise ValidationError("Library on this path already exists. Please use a different path.")
 
 
 class DownloadSetupForm(Form):
