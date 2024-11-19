@@ -1,79 +1,49 @@
 import configparser
-import secrets
 
-from phasarr.variables import config_path, default_config_path
-
-
-class _SetupConfig():
-    __config: configparser.ConfigParser
-    stage: int
-
-    def __init__(self, config: configparser.ConfigParser):
-        self.__dict__["_SetupConfig__config"] = config
-        self.__dict__["stage"] = int("0" + self.__config.get("Setup", "stage"))
-
-    def __setattr__(self, key: str, value = None):
-        super().__setattr__(key, value)
-        self.__config.set("Setup", key, str(value))
-
-        with open(config_path, "w") as config_file:
-            self.__config.write(config_file)
+from flask import Flask
 
 
-class _FlaskConfig():
-    __config: configparser.ConfigParser
-    secret: str
+class Config():
+    app: Flask
+    parser = configparser.ConfigParser()
+    path: str
 
-    def __init__(self, config: configparser.ConfigParser):
-        self.__dict__["_FlaskConfig__config"] = config
-        self.__dict__["secret"] = self.__config.get("Flask", "secret")
+    def __init__(self, app: Flask, path: str, default_path: str = None):
+        self.app = app
+        self.path = path
 
-    def __setattr__(self, key: str, value = None):
-        super().__setattr__(key, value)
-        self.__config.set("Flask", key, str(value))
+        config_does_not_exist = not self.parser.read(path)
 
-        with open(config_path, "w") as config_file:
-            self.__config.write(config_file)
-
-
-class _AuthenticationConfig():
-    __config: configparser.ConfigParser
-    method: str
-
-    def __init__(self, config: configparser.ConfigParser):
-        self.__dict__["_AuthenticationConfig__config"] = config
-        self.__dict__["method"] = self.__config.get("Authentication", "method")
-
-    def __setattr__(self, key: str, value = None):
-        super().__setattr__(key, value)
-        self.__config.set("Authentication", key, str(value))
-
-        with open(config_path, "w") as config_file:
-            self.__config.write(config_file)
-
-
-class Config:
-    __config = configparser.ConfigParser()
-    flask: _FlaskConfig
-    authentication: _AuthenticationConfig
-    setup: _SetupConfig
-
-    def __init__(self):     
-        config_exists = self.__config.read(config_path)
-
-        if not config_exists:
+        if config_does_not_exist and default_path:
             default_config = configparser.ConfigParser()
-            default_config.read(default_config_path)
-            default_config.set("Flask", "secret", secrets.token_hex())
+            default_config.read(default_path)
 
-            with open(config_path, "w") as config_file:
+            with open(path, "w") as config_file:
                 default_config.write(config_file)
             
-            self.__config.read(config_path)
+            self.parser.read(path)
+    
 
-        self.__dict__["flask"] = _FlaskConfig(self.__config)
-        self.__dict__["authentication"] = _AuthenticationConfig(self.__config)
-        self.__dict__["setup"] = _SetupConfig(self.__config)
+class ConfigSection():
+    config: Config
+    section: str
 
-    def __setattr__(self):
-        raise AttributeError("Config section cannot be set directly, only change underlying options.")
+    def __init__(self, config: Config, section: str):
+        self.config = config
+        self.section = section
+
+    def __setattr__(self, key: str, value = None):
+        is_not_internal = key not in ["config", "section"]
+
+        super().__setattr__(key, value)
+
+        if is_not_internal:
+            config_path = self.config.path
+
+            parser = self.config.parser
+            parser.set(self.section, key, str(value))
+
+            with open(config_path, "w") as config_file:
+                parser.write(config_file)
+                self.config.app.logger.info(
+                    f'In section "{self.section}", key "{key}" has been set to "{value}".')
