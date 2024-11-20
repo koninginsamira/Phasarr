@@ -17,4 +17,3 @@ config_path = os.path.join(config_dir, "config.ini")
 
 is_dev_environment = os.environ.get("FLASK_ENV", "development") == "development"
 is_docker = int(os.environ.get("DOCKER", "0"))
-is_local = __name__ == "__main__"

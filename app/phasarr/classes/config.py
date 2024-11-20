@@ -8,8 +8,7 @@ class Config():
     parser = configparser.ConfigParser()
     path: str
 
-    def __init__(self, app: Flask, path: str, default_path: str = None):
-        self.app = app
+    def __init__(self, app: Flask = None, path: str = "./config.ini", default_path: str = None):
         self.path = path
 
         config_does_not_exist = not self.parser.read(path)
@@ -22,6 +21,9 @@ class Config():
                 default_config.write(config_file)
             
             self.parser.read(path)
+
+    def init_app(self, app: Flask):
+        self.app = app
     
 
 class ConfigSection():

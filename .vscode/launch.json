@@ -28,16 +28,14 @@
             "preLaunchTask": "tailwind",
             "module": "flask",
             "env": {
-                "FLASK_APP": "phasarr",
+                // "FLASK_APP": "phasarr",
                 "FLASK_ENV": "development",
-                "FLASK_DEBUG": "1",
+                // "FLASK_DEBUG": "1",
                 "CONFIGPATH": "config/",
                 "DATAPATH": "data/"
             },
             "args": [
-                "run",
-                "--no-debugger",
-                "--no-reload"
+                "run"
             ],
             "jinja": true,
             "autoStartBrowser": false

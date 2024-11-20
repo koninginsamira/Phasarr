@@ -1,14 +1,14 @@
-from datetime import datetime, timezone
-from phasarr.models.library import Library
 import sqlalchemy as sql
 
-from logging import Logger
 from flask_login import current_user, login_user
 from flask import Blueprint, flash, redirect, request, url_for
+from flask import current_app as app
+from datetime import datetime, timezone
 
-from phasarr import db, config, catalog, app
+from phasarr import db, config, catalog
 from phasarr.decorators.auth import login_required, login_required_if_user_exists
 from phasarr.models.user import User
+from phasarr.models.library import Library
 from phasarr.helpers.setup import redirect_setup
 from phasarr.forms.setup import AuthSetupForm, DownloadSetupForm, LibrariesSetupForm
 from phasarr.helpers.list import find_index
@@ -106,7 +106,8 @@ def authentication():
 
         case "POST":
             if form.validate_on_submit():
-                new_username = form.username.data
+                old_username = user.username if user_exists else None
+                new_username = form.username.data if form.username.data != old_username else None
                 new_password = form.password.data
                 new_auth_mode = form.auth_method.data
 
@@ -116,18 +117,26 @@ def authentication():
                     if new_password:
                         user.set_password(new_password)
                     if new_username or new_password:
-                        user.
+                        user.updated_at = datetime.now(timezone.utc)
                 else:
                     user = User(username=new_username)
                     user.set_password(new_password)
                     db.session.add(user)
                 db.session.commit()
 
+                if user_exists:
+                    if new_username:
+                        app.logger.info(f'User "{old_username}" has had their username changed to "{new_username}".')
+                    if new_password:
+                        app.logger.critical(f'User "{user.username}" has had their password changed.')
+                else:
+                    app.logger.info(f'New user "{user.username}" has been added with id "{user.id}"')
+
                 config.authentication.method = new_auth_mode
                 config.setup.stage = 1
 
                 if not login_user(user):
-                    Logger.error("New user could not be logged in.")
+                    app.logger.error(f'User "{user.username}" could not be logged in.')
                 
                 flash("Authentication has been configured!")
                 return redirect(url_for("setup.libraries"))
@@ -140,10 +149,18 @@ def authentication():
     )
 
 
-@setup_app.route("/libraries/remove/<int:id>", methods=["GET", "POST"])
-@login_required
-def remove_libraries(id: int):
-    pass
+# @setup_app.route("/libraries/remove/<int:id>", methods=["GET", "POST"])
+# @login_required
+# def remove_libraries(id: int):
+#     library = id and db.session.scalar(sql.select(Library)
+#         .where(Library.id == id and Library.created_by_id == id))
+#     library_exists = bool(library)
+
+#     if library_exists:
+#         db.session.delete(library)
+#         db.session.commit()
+
+#         app.logger.info(f'Library "{library.name}" with id "{library.id}" has been removed by "{current_user.username}".')
 
 
 @setup_app.route("/libraries", methods=["GET", "POST"])
