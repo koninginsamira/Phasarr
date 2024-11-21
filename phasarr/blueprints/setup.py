@@ -4,15 +4,15 @@ import sqlalchemy as sql
 
 from logging import Logger
 from flask_login import current_user, login_user
-from flask import Blueprint, flash, redirect, request, url_for
+from flask import Blueprint, flash, redirect, request, url_for, current_app as app
 
-from phasarr import db, config, catalog, app
+from phasarr import db, config, catalog
 from phasarr.decorators.auth import login_required, login_required_if_user_exists
 from phasarr.models.user import User
 from phasarr.helpers.setup import redirect_setup
 from phasarr.forms.setup import AuthSetupForm, DownloadSetupForm, LibrariesSetupForm
 from phasarr.helpers.list import find_index
-from phasarr.helpers.dir import get_dirs
+from phasarr.helpers.file import get_dirs
 from phasarr.helpers.sql import get_row_count_from
 
 
@@ -116,7 +116,7 @@ def authentication():
                     if new_password:
                         user.set_password(new_password)
                     if new_username or new_password:
-                        user.
+                        pass
                 else:
                     user = User(username=new_username)
                     user.set_password(new_password)

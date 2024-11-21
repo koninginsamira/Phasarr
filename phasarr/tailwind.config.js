@@ -5,7 +5,7 @@ module.exports = {
     content: [
         "./templates/**/*.{html,htm,jinja}",
         "./components/**/*.{html,htm,jinja}",
-        "./static/src/**/*.js"
+        "./static/**/*.js"
     ],
     theme: {
         extend: {

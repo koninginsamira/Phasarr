@@ -1,5 +1,6 @@
-*/phasarr/config/
-*/phasarr/data/
+**/tailwind/src/output.css
+**/config
+**/data
 
 # Created by https://www.toptal.com/developers/gitignore/api/git,linux,macos,python,windows,visualstudiocode,flask
 # Edit at https://www.toptal.com/developers/gitignore?templates=git,linux,macos,python,windows,visualstudiocode,flask

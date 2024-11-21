@@ -38,8 +38,8 @@ class PhasarrConfig(Config):
     authentication: Authentication
     setup: Setup
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def init_app(self, *args, **kwargs):
+        super().init_app(*args, **kwargs)
 
         self.flask = Flask(self, "Flask")
         self.authentication = Authentication(self, "Authentication")

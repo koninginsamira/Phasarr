@@ -1,4 +1,5 @@
 import configparser
+import os
 
 from flask import Flask
 
@@ -7,21 +8,31 @@ class Config():
     app: Flask
     parser = configparser.ConfigParser()
     path: str
+    default_path: str
 
-    def __init__(self, app: Flask, path: str, default_path: str = None):
-        self.app = app
+    def __init__(self, 
+                 app: Flask = None, 
+                 path: str = "config.ini", default_path: str = None):
         self.path = path
+        self.default_path = default_path
 
-        config_does_not_exist = not self.parser.read(path)
+        if app:
+            self.init_app(app)
 
-        if config_does_not_exist and default_path:
+    def init_app(self, app: Flask):
+        self.app = app
+
+        config_does_not_exist = not self.parser.read(self.path)
+
+        if config_does_not_exist and self.default_path:
             default_config = configparser.ConfigParser()
-            default_config.read(default_path)
+            default_config.read(self.default_path)
 
-            with open(path, "w") as config_file:
+            os.makedirs(os.path.dirname(self.path), exist_ok=True)
+            with open(self.path, "w") as config_file:
                 default_config.write(config_file)
             
-            self.parser.read(path)
+            self.parser.read(self.path)
     
 
 class ConfigSection():

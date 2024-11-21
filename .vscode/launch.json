@@ -15,7 +15,7 @@
             },
             "pathMappings": [
                 {
-                    "localRoot": "${workspaceFolder}/app",
+                    "localRoot": "${workspaceFolder}/phasarr",
                     "remoteRoot": "."
                 }
             ],
@@ -28,13 +28,12 @@
             "preLaunchTask": "tailwind",
             "module": "flask",
             "env": {
-                "FLASK_APP": "phasarr",
-                "FLASK_ENV": "development",
                 "FLASK_DEBUG": "1",
                 "CONFIGPATH": "config/",
                 "DATAPATH": "data/"
             },
             "args": [
+                "--app", "phasarr",
                 "run",
                 "--no-debugger",
                 "--no-reload"

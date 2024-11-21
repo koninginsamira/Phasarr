@@ -1,3 +1,4 @@
+import os
 from flask_login import LoginManager
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
@@ -8,20 +9,25 @@ from jinjax import Catalog
 from phasarr.config import PhasarrConfig
 from phasarr.helpers.form import is_required
 from phasarr.helpers.debug import attach_debugpy
-from phasarr.helpers.log import init_gunicorn_logging
-from phasarr.helpers.database import init_database, migrate_database
+from phasarr.helpers.gunicorn import init_gunicorn_logging, is_gunicorn
+from phasarr.helpers.database import init_database, is_upgrade
 from phasarr.variables import (
-    is_local, is_dev_environment, is_docker,
-    components_dir, templates_dir, migrations_dir,
-    db_path, config_path, default_config_path
+    is_docker,
+    components_dir, templates_dir,
+    config_path, default_config_path, db_path,
+    debug_port
 )
 
 
 app = Flask(__name__)
+
+if is_gunicorn:
+    init_gunicorn_logging(app)
+    
 config = PhasarrConfig(app, path=config_path, default_path=default_config_path)
 
-app.config["SECRET_KEY"] = config.flask.secret,
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///" + db_path
+app.config["SECRET_KEY"] = config.flask.secret
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///" + os.path.abspath(db_path)
 app.jinja_env.filters['is_required'] = is_required
 
 catalog = Catalog(jinja_env=app.jinja_env)
@@ -35,14 +41,8 @@ init_database(app, db)
 http_auth = HTTPBasicAuth()
 login = LoginManager(app)
 
-if not is_local:
-    init_gunicorn_logging(app)
-
-if is_dev_environment:
-    if is_local:
-        migrate_database(app, migrations_dir)
-    elif is_docker:
-        attach_debugpy(app)
+if is_docker and app.debug:
+    attach_debugpy(app, debug_port)
 
 
 import phasarr.blueprints

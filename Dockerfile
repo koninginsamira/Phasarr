@@ -1,22 +1,20 @@
 FROM ubuntu:24.04
 FROM python:3.12
 
-WORKDIR /app
+WORKDIR /
 
-COPY ./app/ ./
+COPY ./ ./
 
-RUN pip install -r ./phasarr/requirements.txt
-RUN ./phasarr/tailwindcss -i ./phasarr/static/src/input.css -o ./phasarr/static/css/main.css --minify
-RUN pip install -e .
+# Install packages
+RUN pip install -r ./requirements.txt
+RUN rm -rf ./requirements.txt
 
-RUN rm -rf ./phasarr/tailwindcss ./phasarr/tailwind.config.js ./phasarr/static/src/ ./phasarr/requirements.txt
+# Generate Tailwind CSS
+RUN cd ./phasarr && ./tailwindcss -i ./static/css/tailwind/input.css -o ./static/css/tailwind/output.css --minify
+RUN cd ./phasarr && rm -rf ./tailwindcss ./tailwind.config.js ./static/css/tailwind/input.css
 
-RUN printf \
-    "#!/bin/bash \
-    \n\n \
-    gunicorn phasarr:app --log-level=\${LOG_LEVEL}" \
-> run.sh
-RUN chmod +x run.sh
+# Prepare entrypoint
+RUN chmod a+x run.sh
 
 EXPOSE 5252
 
@@ -24,7 +22,7 @@ VOLUME /config
 VOLUME /logs
 
 ENV DOCKER=1
-ENV FLASK_ENV=production
+ENV DEBUG=1
 ENV LOG_LEVEL=info
 
 ENV PORT=5252

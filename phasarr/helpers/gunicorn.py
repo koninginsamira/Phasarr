@@ -1,6 +1,9 @@
 import logging
+import os
 from flask import Flask
 
+
+is_gunicorn = "gunicorn" in os.environ.get("SERVER_SOFTWARE", "")
 
 def init_gunicorn_logging(app: Flask):
     gunicorn_logger = logging.getLogger("gunicorn.error")

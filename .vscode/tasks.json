@@ -5,7 +5,7 @@
             "label": "tailwind",
             "type": "shell",
             "isBackground": true,
-            "command": "cd ./app/phasarr && ./tailwindcss -i ./static/src/input.css -o ./static/css/main.css --watch",
+            "command": "cd ./phasarr && ./tailwindcss -i ./static/css/tailwind/input.css -o ./static/css/tailwind/output.css --watch",
 
             // Let VS Code continue without waiting for task to end
             "problemMatcher": [{
@@ -26,7 +26,7 @@
             "label": "docker",
             "type": "shell",
             "isBackground": true,
-            "command": "sudo docker build --no-cache -t phasarr-dev . && sudo docker run -t -i -p 5253:5253 -p 5678:5678 -e FLASK_ENV='development' -e LOG_LEVEL='debug' -e PORT='5253' phasarr-dev",
+            "command": "sudo docker build --no-cache -t phasarr-dev . &> build.log && sudo docker run -t -i -p 5253:5253 -p 5678:5678 -e DEBUG=1 -e LOG_LEVEL='debug' -e PORT='5253' phasarr-dev",
     
             // Wait for the container to start
             "problemMatcher": {
