@@ -57,4 +57,4 @@ class ConfigSection():
             with open(config_path, "w") as config_file:
                 parser.write(config_file)
                 self.config.app.logger.info(
-                    f'In section "{self.section}", key "{key}" has been set to "{value}".')
+                    f'In section "{self.section}", "{key}" has been set to "{value}".')
