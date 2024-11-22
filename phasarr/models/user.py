@@ -1,3 +1,4 @@
+from datetime import datetime, timezone
 from flask_login import UserMixin
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -11,8 +12,9 @@ class User(UserMixin, db.Model):
     username: Mapped[str] = mapped_column(unique=True, index=True, nullable=False)
     password_hash: Mapped[str] = mapped_column(nullable=False)
 
-    # created_at: 
-    # updated_at: 
+    created_at: Mapped[datetime] = mapped_column(
+        nullable=False, default=lambda: datetime.now(timezone.utc))
+    updated_at: Mapped[datetime] = mapped_column(nullable=True)
 
     libraries_created: Mapped[list["Library"]] = relationship( # type: ignore (prevents circular import)
         "Library", foreign_keys="Library.created_by_id", back_populates="created_by")
