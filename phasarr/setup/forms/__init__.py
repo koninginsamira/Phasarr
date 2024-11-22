@@ -7,7 +7,7 @@ from wtforms.validators import DataRequired, EqualTo, Optional
 from phasarr import db
 from phasarr.models.user import User
 from phasarr.models.library import Library
-from phasarr.classes.form import Form
+from phasarr.components.form.classes.form import Form
 
 
 class AuthSetupForm(Form):

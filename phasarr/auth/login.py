@@ -1,29 +1,3 @@
-import sqlalchemy as sql
-
-from flask_login import login_user
-from flask import Blueprint
-
-from phasarr import http_auth, db, login
-from phasarr.models.user import User
-
-
-auth_app = Blueprint("auth", __name__)
-
-
-@http_auth.verify_password
-def verify_password(username, password):
-    user = db.session.scalar(sql.select(User).where(User.username == username))
-
-    if user and user.check_password(password):
-        login_user(user)
-        return user.username
-    
-
-@login.user_loader
-def load_user(id):
-    return db.session.get(User, int(id))
-
-
 # @auth_app.route("/login", methods=["GET", "POST"])
 # def login():
 #     if request.method == "GET":

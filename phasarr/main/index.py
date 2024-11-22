@@ -1,10 +1,6 @@
-from flask import Blueprint
-
 from phasarr import catalog
-from phasarr.decorators.auth import login_required
-
-
-main_app = Blueprint("main", __name__)
+from phasarr.main import main_app
+from phasarr.components.auth.decorators.auth import login_required
 
 
 @main_app.before_request

@@ -2,19 +2,20 @@ import os
 from flask_login import LoginManager
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
-from flask import Flask
+from flask import Flask, redirect, request, url_for
 from flask_httpauth import HTTPBasicAuth
 from jinjax import Catalog
 
 from phasarr.config import PhasarrConfig
-from phasarr.helpers.form import is_required
-from phasarr.helpers.debug import attach_debugpy
-from phasarr.helpers.gunicorn import init_gunicorn_logging, is_gunicorn
-from phasarr.helpers.database import init_database, is_upgrade
+from phasarr.components.utilities.helpers.catalog import import_templates_from_components
+from phasarr.components.form.helpers.form import is_required
+from phasarr.components.utilities.helpers.debug import attach_debugpy
+from phasarr.components.utilities.helpers.gunicorn import init_gunicorn_logging, is_gunicorn
+from phasarr.components.utilities.helpers.database import init_database
 from phasarr.variables import (
     is_docker,
-    components_dir, templates_dir,
-    config_path, default_config_path, db_path,
+    components_folder, templates_folder,
+    config_file, default_config_file, db_file,
     debug_port
 )
 
@@ -23,26 +24,68 @@ app = Flask(__name__)
 
 if is_gunicorn:
     init_gunicorn_logging(app)
+
+# ------------------------------------------------------
+# Set config
+# ------------------------------------------------------
     
-config = PhasarrConfig(app, path=config_path, default_path=default_config_path)
-
+config = PhasarrConfig(app, path=config_file, default_path=default_config_file)
 app.config["SECRET_KEY"] = config.flask.secret
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///" + os.path.abspath(db_path)
-app.jinja_env.filters['is_required'] = is_required
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///" + os.path.abspath(db_file)
 
-catalog = Catalog(jinja_env=app.jinja_env)
-catalog.add_folder(components_dir)
-catalog.add_folder(templates_dir)
+# ------------------------------------------------------
+# Initialise database
+# ------------------------------------------------------
 
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 init_database(app, db)
 
+# ------------------------------------------------------
+# Initialise authentication
+# ------------------------------------------------------
+
 http_auth = HTTPBasicAuth()
 login = LoginManager(app)
+
+# ------------------------------------------------------
+# Attach debugging
+# ------------------------------------------------------
 
 if is_docker and app.debug:
     attach_debugpy(app, debug_port)
 
+# ------------------------------------------------------
+# Register pages
+# ------------------------------------------------------
 
-import phasarr.blueprints
+app.jinja_env.filters['is_required'] = is_required
+catalog = Catalog(jinja_env=app.jinja_env)
+
+catalog.add_folder(templates_folder)
+import_templates_from_components(catalog, components_folder)
+
+from phasarr.auth import auth_app
+app.register_blueprint(auth_app, url_prefix="/")
+catalog.add_folder(auth_app.template_folder, prefix=auth_app.name)
+
+from phasarr.main import main_app
+app.register_blueprint(main_app, url_prefix="/")
+catalog.add_folder(main_app.template_folder, prefix=main_app.name)
+
+from phasarr.setup import setup_app, stages
+app.register_blueprint(setup_app, url_prefix="/setup")
+catalog.add_folder(setup_app.template_folder, prefix=setup_app.name)
+
+from phasarr.api import api_app
+app.register_blueprint(api_app, url_prefix="/api")
+
+@app.before_request
+def before():
+    current_stage = config.setup.stage
+    is_blueprint = request.blueprint != None
+    is_not_setup = not (request.blueprint == "setup")
+    setup_is_not_done = not (current_stage > len(stages))
+
+    if is_blueprint and is_not_setup and setup_is_not_done:
+        return redirect(url_for("setup.setup"))

@@ -4,19 +4,16 @@ import os
 debug_port = int(os.environ.get("DEBUG_PORT", "5678"))
 
 # Paths
-migrations_dir = "migrations"
+config_folder = os.environ.get("CONFIGPATH")
+config_file = os.path.join(config_folder, "config.ini")
+db_file = os.path.join(config_folder, "database.db")
 
-config_dir = os.environ.get("CONFIGPATH")
-config_path = os.path.join(config_dir, "config.ini")
-db_path = os.path.join(config_dir, "database.db")
+app_folder = os.path.dirname(os.path.realpath(__file__))
+components_folder = os.path.join(app_folder, "components")
+templates_folder = os.path.join(app_folder, "templates")
 
-app_dir = os.path.dirname(os.path.realpath(__file__))
-components_dir = os.path.join(app_dir, "components")
-templates_dir = os.path.join(app_dir, "templates")
-
-defaults_dir = os.path.join(app_dir, "defaults")
-default_config_path = os.path.join(defaults_dir, "config.ini")
+defaults_folder = os.path.join(app_folder, "defaults")
+default_config_file = os.path.join(defaults_folder, "config.ini")
 
 # Checks
 is_docker = int(os.environ.get("DOCKER", "0"))
-is_local = __name__ == "__main__"

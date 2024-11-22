@@ -4,7 +4,7 @@ from functools import wraps
 from flask_login import current_user
 
 from phasarr import http_auth, config, db
-from phasarr.helpers.sql import get_row_count_from
+from phasarr.components.utilities.helpers.sql import get_row_count_from
 from phasarr.models.user import User
 
 

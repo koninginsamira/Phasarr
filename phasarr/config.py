@@ -1,6 +1,6 @@
 import secrets
 from flask import Flask
-from phasarr.classes.config import Config, ConfigSection
+from phasarr.components.config.classes.config import Config, ConfigSection
 
 
 class Setup(ConfigSection):

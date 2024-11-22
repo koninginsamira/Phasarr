@@ -6,7 +6,7 @@
 
     skippable: bool = False,
     form,
-    dirs: dict,
+    folders: dict,
     libraries: list
 #}
 
@@ -79,7 +79,7 @@
                     <div class="flex flex-col gap-4">
                         <form.input.InputBox field={{ form.name }} />
 
-                        <form.tree.TreeSelector field={{ form.path }} tree={{ dirs }} />
+                        <form.tree.TreeSelector field={{ form.path }} tree={{ folders }} />
 
                         <div class="flex justify-end items-center gap-2 my-5">
                             {% if form.errors %}<p class="text-sm text-error">Correct errors before you try again.</p>{% endif %}

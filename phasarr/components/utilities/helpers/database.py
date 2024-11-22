@@ -4,7 +4,7 @@ import sys
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
-from phasarr.helpers.file import remove_protocol
+from phasarr.components.utilities.helpers.file import remove_protocol
 
 
 is_upgrade = "db" in sys.argv and "upgrade" in sys.argv

@@ -37,11 +37,11 @@
 
             <div id="file_manager" class="h-64 px-4 pb-4 overflow-y-auto">
                 <tree.view.TreeView tree={{ tree }}
-                    on_branch_open="selectDir" on_leaf_click="selectDir" on_navigate="selectDir" />
+                    on_branch_open="selectFolder" on_leaf_click="selectFolder" on_navigate="selectFolder" />
             </div>
             
             <script>
-                function selectDir(id) {
+                function selectFolder(id) {
                     const fileManager = document.getElementById("file_manager");
 
                     fileManager.querySelectorAll('[id$="_name"]').forEach((el) => {
