@@ -24,33 +24,17 @@ app = Flask(__name__)
 
 if is_gunicorn:
     init_gunicorn_logging(app)
-
-# ------------------------------------------------------
-# Set config
-# ------------------------------------------------------
     
 config = PhasarrConfig(app, path=config_file, default_path=default_config_file)
 app.config["SECRET_KEY"] = config.flask.secret
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///" + os.path.abspath(db_file)
 
-# ------------------------------------------------------
-# Initialise database
-# ------------------------------------------------------
-
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 init_database(app, db)
 
-# ------------------------------------------------------
-# Initialise authentication
-# ------------------------------------------------------
-
 http_auth = HTTPBasicAuth()
 login = LoginManager(app)
-
-# ------------------------------------------------------
-# Attach debugging
-# ------------------------------------------------------
 
 if is_docker and app.debug:
     attach_debugpy(app, debug_port)
