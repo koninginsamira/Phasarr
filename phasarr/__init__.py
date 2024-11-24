@@ -65,11 +65,12 @@ from phasarr.api import api_app
 app.register_blueprint(api_app, url_prefix="/api")
 
 @app.before_request
-def before():
+def check_setup_stage():
     current_stage = config.setup.stage
     is_blueprint = request.blueprint != None
     is_not_setup = not (request.blueprint == "setup")
+    is_not_api = not (request.blueprint == "api")
     setup_is_not_done = not (current_stage > len(stages))
 
-    if is_blueprint and is_not_setup and setup_is_not_done:
+    if is_blueprint and is_not_setup and is_not_api and setup_is_not_done:
         return redirect(url_for("setup.setup"))
