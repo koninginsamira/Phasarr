@@ -62,7 +62,13 @@
 
     {% if not parent_id %}
         <script>
-            function toggleBranch(id, mode = "toggle") {
+            async function toggleBranch(id, mode = "toggle") {
+                const isLoading = document.getElementById(id + "_loading");
+
+                if (isLoading) {
+                    await loadBranch(id, () => toggleBranch(id, mode));
+                }
+
                 const isEmpty = document.getElementById(id + "_content").innerHTML === "";
 
                 if (isEmpty) {
@@ -70,70 +76,47 @@
                         {{ on_leaf_click }}(id)
                     {% endif %}
                 } else {
-                    const isLoading = document.getElementById(id + "_loading");
+                    let action;
+                    let antiAction;
 
-                    if (isLoading) {
-                        loadBranch(id, () => toggleBranch(id, mode));
-                    } else {
-                        let action;
-                        let antiAction;
-
-                        switch(mode) {
-                            case "open":
-                                action = "add";
-                                antiAction = "remove";
-                                break;
-                            case "close":
-                                action = "remove";
-                                antiAction = "add";
-                                break;
-                            case "toggle":
-                                action = "toggle";
-                                antiAction = "toggle";
-                                break;
-                            default:
-                                throw new Error("Mode '" + mode + "' was not recognised!");
-                        }
-
-                        const icon = document.getElementById(id + "_icon");
-                        const content = document.getElementById(id + "_content");
-
-                        icon.classList[antiAction]("fa-folder-closed");
-                        icon.classList[action]("fa-folder-open");
-                        
-                        content.classList[antiAction]("h-0");
-                        content.classList[action]("h-auto");
-                        content.classList[antiAction]("scale-y-0");
-                        content.classList[action]("scale-y-100");
-                        content.classList[action]("block");
-
-                        {% if on_branch_open %}
-                            {{ on_branch_open }}(id)
-                        {% endif %}
+                    switch(mode) {
+                        case "open":
+                            action = "add";
+                            antiAction = "remove";
+                            break;
+                        case "close":
+                            action = "remove";
+                            antiAction = "add";
+                            break;
+                        case "toggle":
+                            action = "toggle";
+                            antiAction = "toggle";
+                            break;
+                        default:
+                            throw new Error("Mode '" + mode + "' was not recognised!");
                     }
+
+                    const icon = document.getElementById(id + "_icon");
+                    const content = document.getElementById(id + "_content");
+
+                    icon.classList[antiAction]("fa-folder-closed");
+                    icon.classList[action]("fa-folder-open");
+                    
+                    content.classList[antiAction]("h-0");
+                    content.classList[action]("h-auto");
+                    content.classList[antiAction]("scale-y-0");
+                    content.classList[action]("scale-y-100");
+                    content.classList[action]("block");
+
+                    {% if on_branch_open %}
+                        {{ on_branch_open }}(id)
+                    {% endif %}
                 }
             }
 
-            function loadBranch(id, after = undefined) {
-                var xhttp = new XMLHttpRequest();
+            async function loadBranch(id) {
                 const label = document.getElementById(id + "_label");
                 const content = document.getElementById(id + "_content");
-
-                xhttp.onreadystatechange = function() {
-                    if (this.readyState == 4) {
-                        content.innerHTML = this.responseText;
-
-                        {% if not on_leaf_click %}
-                            if (this.status == 204) {
-                                label.classList.remove("cursor-pointer");
-                            }
-                        {% endif %}
-
-                        if (after) {
-                            after();
-                        }
-                    }
-                };
 
                 const params = {{ attrs }};
                 params["parent_id"] = id;
@@ -145,23 +128,31 @@
                 params["on_navigate"] = "{{ on_navigate }}";
 
                 const url = "{{ url_for('tree.view_from_api') }}" +
-                    "?" + Object.entries(params)
-                        .map(([key, value]) => 
-                            encodeURIComponent(key) + "=" + encodeURIComponent(value)
-                        )
-                        .join("&");
+                    "?" + new URLSearchParams(params).toString();
 
-                xhttp.open("GET", url);
-                xhttp.send();
+                try {
+                    const response = await fetch(url);
+                    const result = await response.text();
+
+                    content.innerHTML = result;
+
+                    {% if not on_leaf_click %}
+                        if (this.status == 204) {
+                            label.classList.remove("cursor-pointer");
+                        }
+                    {% endif %}
+                } catch (e) {
+                    console.error("Error while loading branch:", e);
+                }
             }
 
-            function navigateTo(id) {
+            async function navigateTo(id) {
                 const route = id.split("{{ separator }}");
 
                 let currentPos = "";
                 for (let i = 1; i < route.length - 1; i++) {
                     currentPos = currentPos + "{{ separator }}" + route[i];
-                    toggleBranch(currentPos, "open");
+                    await toggleBranch(currentPos, "open");
                 }
                 {% if on_navigate %}
                     {{ on_navigate }}(id);
