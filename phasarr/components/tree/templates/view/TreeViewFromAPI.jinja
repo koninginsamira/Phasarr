@@ -154,18 +154,16 @@
                     currentPos = currentPos + "{{ separator }}" + route[i];
                     await toggleBranch(currentPos, "open");
                 }
+                
                 {% if on_navigate %}
                     {{ on_navigate }}(id);
                 {% endif %}
 
-                const animations = document.getAnimations();
-                Promise.all(animations.map(animation => animation.finished))
-                    .then(() => {
-                        document.getElementById(id).scrollIntoView({
-                            behavior: "smooth",
-                            block: "center"
-                        });
-                    });
+                const target = document.getElementById(id);
+                target.scrollIntoView({
+                    behavior: "smooth",
+                    block: "center"
+                });
             }
         </script>
     {% endif %}
