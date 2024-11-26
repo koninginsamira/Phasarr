@@ -1,5 +1,7 @@
+import inspect
 import re
-from flask import request
+
+from flask import request, current_app as app
 
 from phasarr.api import api_app
 from phasarr.components.utilities.helpers.file import get_folders
@@ -8,14 +10,15 @@ from phasarr.components.utilities.helpers.file import get_folders
 prefix = "folders"
 
 @api_app.route(f"/{prefix}/list")
-@api_app.route(f"/{prefix}/list/<path:path>")
-def list(path: str = ""):
-    path = "./" + path
+def folder_list():
+    api_name = inspect.currentframe().f_code.co_name
+
+    path = f"./{request.args.get("path", "").lstrip("/")}"
     limit = request.args.get("limit")
     limit = int(limit) if limit else None
-    offset = request.args.get("offset")
-    offset = int(offset) if offset else None
     exclude = request.args.get("exclude")
     exclude = re.compile(exclude) if exclude else None
 
-    return get_folders(path, limit=limit, offset=offset, exclude=exclude)
+    app.logger.debug(f'API "{api_name}" has been called with the following arguments: {request.args.to_dict(flat=True)}')
+
+    return get_folders(path, limit=limit, exclude=exclude)

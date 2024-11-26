@@ -1,13 +1,13 @@
-from datetime import datetime, timezone
-from phasarr.models.library import Library
 import sqlalchemy as sql
 
+from datetime import datetime, timezone
 from flask_login import current_user
 from flask import flash, redirect, request, url_for
 
 from phasarr import db, catalog
 from phasarr.setup import setup_app, stages
 from phasarr.setup.forms import LibrariesSetupForm
+from phasarr.models.library import Library
 from phasarr.components.auth.decorators.auth import login_required
 from phasarr.components.utilities.helpers.file import get_folders
 
@@ -16,6 +16,13 @@ from phasarr.components.utilities.helpers.file import get_folders
 @login_required
 def remove_libraries(id: int):
     pass
+#     library = id and db.session.scalar(sql.select(Library)
+#         .where(Library.id == id and Library.created_by_id == id))
+#     library_exists = bool(library)
+#     if library_exists:
+#         db.session.delete(library)
+#         db.session.commit()
+#         app.logger.info(f'Library "{library.name}" with id "{library.id}" has been removed by "{current_user.username}".')
 
 
 @setup_app.route("/libraries", methods=["GET", "POST"])
@@ -60,14 +67,20 @@ def libraries(id: int = None):
                 flash("Library has been added!")
                 return redirect(url_for("setup.libraries", id=None))
     
-    folders = get_folders('.')
+    folder_limit = 2
+    folders = get_folders('.', limit=folder_limit)
     libraries = current_user.libraries_created
     
     return catalog.render(
         "setup.Libraries",
         current_stage="libraries",
         stages=stages,
+
         form=form,
+
         folders=folders,
+        folder_api=url_for("api.folder_list"),
+        folder_limit=str(folder_limit),
+
         libraries=libraries
     )

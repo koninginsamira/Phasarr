@@ -10,6 +10,7 @@ while true; do
 done
 
 export FLASK_DEBUG=$DEBUG
+export GEVENT_SUPPORT=True
 
 echo Starting app...
-exec gunicorn phasarr:app --log-level="${LOG_LEVEL}"
+exec gunicorn -k gevent phasarr:app --log-level="${LOG_LEVEL}"

@@ -6,7 +6,11 @@
 
     skippable: bool = False,
     form,
+
     folders: dict,
+    folder_api: str,
+    folder_limit: str = "0",
+
     libraries: list
 #}
 
@@ -32,12 +36,12 @@
                             secondary
                             additional_class={{ "bg-transparent" if is_editing_this_library else "" }}
                         >
-                            <script>
+                            {# <script>
                                 console.log(typeof {{ form.id.data }} + "/" + typeof {{ library.id }})
                                 console.log("{{ form.id.data }} / {{ library.id }}")
                                 console.log("{{ form.id.data == library.id }}")
                                 console.log("{{ is_editing_this_library }}")
-                            </script>
+                            </script> #}
                             <ui.containers.card.CardBody additional_class="select-none">
                                 <div class="flex flex-row items-center justify-between">
                                     <div class="flex flex-col">
@@ -79,7 +83,12 @@
                     <div class="flex flex-col gap-4">
                         <form.input.InputBox field={{ form.name }} />
 
-                        <form.tree.TreeSelector field={{ form.path }} tree={{ folders }} />
+                        <form.tree.TreeSelectorFromAPI
+                            field={{ form.path }}
+                            tree={{ folders }}
+                            api={{ folder_api }}
+                            limit={{ folder_limit }}
+                        />
 
                         <div class="flex justify-end items-center gap-2 my-5">
                             {% if form.errors %}<p class="text-sm text-error">Correct errors before you try again.</p>{% endif %}

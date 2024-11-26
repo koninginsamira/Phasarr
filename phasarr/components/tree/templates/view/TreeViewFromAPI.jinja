@@ -1,0 +1,181 @@
+{#def
+    parent_id: str = "",
+    api: str,
+    tree: dict,
+    path: str = "",
+    limit: str = "",
+    on_branch_open: str = "",
+    on_leaf_click: str = "",
+    on_navigate: str = ""
+#}
+
+{%- set separator = "/" %}
+
+<ul class="flex flex-col gap-2">
+    {% for name, content in tree.items() %}
+        {% set id = parent_id + separator + name %}
+
+        <li id="{{ id }}" class="flex flex-col">
+            <div
+                id="{{ id }}_label"
+                class="
+                    flex items-center gap-2
+                    px-4 py-2
+                    rounded-lg hover:bg-surface-variant
+                    select-none
+                    cursor-pointer
+                "
+                onclick="toggleBranch('{{ id }}')"
+            >
+                <i id="{{ id }}_icon" class="w-4 fa-solid fa-folder-closed"></i>
+                <p id="{{ id }}_name">{{ name }}</p>
+            </div>
+            <div id="{{ id }}_content" class="
+                h-0 scale-y-0 pl-8
+                origin-top transition-transform
+            ">
+                {% if content %}
+                    <tree.view.TreeViewFromAPI
+                        parent_id={{ id }}
+                        api={{ api }}
+                        tree={{ content }}
+                        limit={{ limit }}
+                        on_branch_open={{ on_branch_open }}
+                        on_leaf_click={{ on_leaf_click }}
+                        on_navigate={{ on_navigate }}
+                        _attrs={{ attrs }}
+                    />
+                {% else %}
+                    <div id="{{ id }}_loading" class="
+                        inline-block
+                        h-8 w-8
+                        rounded-full
+                        border-4 border-solid border-current border-e-transparent
+                        align-[-0.125em]
+                        animate-spin motion-reduce:animate-[spin_1.5s_linear_infinite]
+                    " role="status">
+                    Loading...</div>
+                {% endif %}
+            </div>
+        </li>
+    {% endfor %}
+
+    {% if not parent_id %}
+        <script>
+            function toggleBranch(id, mode = "toggle") {
+                const isEmpty = document.getElementById(id + "_content").innerHTML === "";
+
+                if (isEmpty) {
+                    {% if on_leaf_click %}
+                        {{ on_leaf_click }}(id)
+                    {% endif %}
+                } else {
+                    const isLoading = document.getElementById(id + "_loading");
+
+                    if (isLoading) {
+                        loadBranch(id, () => toggleBranch(id, mode));
+                    } else {
+                        let action;
+                        let antiAction;
+
+                        switch(mode) {
+                            case "open":
+                                action = "add";
+                                antiAction = "remove";
+                                break;
+                            case "close":
+                                action = "remove";
+                                antiAction = "add";
+                                break;
+                            case "toggle":
+                                action = "toggle";
+                                antiAction = "toggle";
+                                break;
+                            default:
+                                throw new Error("Mode '" + mode + "' was not recognised!");
+                        }
+
+                        const icon = document.getElementById(id + "_icon");
+                        const content = document.getElementById(id + "_content");
+
+                        icon.classList[antiAction]("fa-folder-closed");
+                        icon.classList[action]("fa-folder-open");
+                        
+                        content.classList[antiAction]("h-0");
+                        content.classList[action]("h-auto");
+                        content.classList[antiAction]("scale-y-0");
+                        content.classList[action]("scale-y-100");
+                        content.classList[action]("block");
+
+                        {% if on_branch_open %}
+                            {{ on_branch_open }}(id)
+                        {% endif %}
+                    }
+                }
+            }
+
+            function loadBranch(id, after = undefined) {
+                var xhttp = new XMLHttpRequest();
+                const label = document.getElementById(id + "_label");
+                const content = document.getElementById(id + "_content");
+
+                xhttp.onreadystatechange = function() {
+                    if (this.readyState == 4) {
+                        content.innerHTML = this.responseText;
+
+                        {% if not on_leaf_click %}
+                            if (this.status == 204) {
+                                label.classList.remove("cursor-pointer");
+                            }
+                        {% endif %}
+
+                        if (after) {
+                            after();
+                        }
+                    }
+                };
+
+                const params = {{ attrs }};
+                params["parent_id"] = id;
+                params["api"] = "{{ api }}";
+                params["path"] = "{{ path }}" || id;
+                params["limit"] = {{ limit | int }};
+                params["on_branch_open"] = "{{ on_branch_open }}";
+                params["on_leaf_click"] = "{{ on_leaf_click }}";
+                params["on_navigate"] = "{{ on_navigate }}";
+
+                const url = "{{ url_for('tree.view_from_api') }}" +
+                    "?" + Object.entries(params)
+                        .map(([key, value]) => 
+                            encodeURIComponent(key) + "=" + encodeURIComponent(value)
+                        )
+                        .join("&");
+
+                xhttp.open("GET", url);
+                xhttp.send();
+            }
+
+            function navigateTo(id) {
+                const route = id.split("{{ separator }}");
+
+                let currentPos = "";
+                for (let i = 1; i < route.length - 1; i++) {
+                    currentPos = currentPos + "{{ separator }}" + route[i];
+                    toggleBranch(currentPos, "open");
+                }
+                {% if on_navigate %}
+                    {{ on_navigate }}(id);
+                {% endif %}
+
+                const animations = document.getAnimations();
+                Promise.all(animations.map(animation => animation.finished))
+                    .then(() => {
+                        document.getElementById(id).scrollIntoView({
+                            behavior: "smooth",
+                            block: "center"
+                        });
+                    });
+            }
+        </script>
+    {% endif %}
+</ul>

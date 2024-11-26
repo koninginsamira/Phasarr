@@ -7,14 +7,13 @@ from flask_httpauth import HTTPBasicAuth
 from jinjax import Catalog
 
 from phasarr.config import PhasarrConfig
-from phasarr.components.utilities.helpers.catalog import import_templates_from_components
 from phasarr.components.form.helpers.form import is_required
 from phasarr.components.utilities.helpers.debug import attach_debugpy
 from phasarr.components.utilities.helpers.gunicorn import init_gunicorn_logging, is_gunicorn
 from phasarr.components.utilities.helpers.database import init_database
 from phasarr.variables import (
     is_docker,
-    components_folder, templates_folder,
+    templates_folder,
     config_file, default_config_file, db_file,
     debug_port
 )
@@ -47,7 +46,13 @@ app.jinja_env.filters['is_required'] = is_required
 catalog = Catalog(jinja_env=app.jinja_env)
 
 catalog.add_folder(templates_folder)
-import_templates_from_components(catalog, components_folder)
+
+from phasarr.components.form import import_component as import_form
+from phasarr.components.tree import import_component as import_tree
+from phasarr.components.ui import import_component as import_ui
+import_form(app, catalog)
+import_tree(app, catalog)
+import_ui(app, catalog)
 
 from phasarr.auth import auth_app
 app.register_blueprint(auth_app, url_prefix="/")
@@ -68,9 +73,13 @@ app.register_blueprint(api_app, url_prefix="/api")
 def check_setup_stage():
     current_stage = config.setup.stage
     is_blueprint = request.blueprint != None
+
     is_not_setup = not (request.blueprint == "setup")
     is_not_api = not (request.blueprint == "api")
+    is_not_component = request.path.strip("/").split("/")[0] != "fragments"
+    is_page = is_not_setup and is_not_api and is_not_component
+
     setup_is_not_done = not (current_stage > len(stages))
 
-    if is_blueprint and is_not_setup and is_not_api and setup_is_not_done:
+    if (is_blueprint and is_page and setup_is_not_done):
         return redirect(url_for("setup.setup"))
