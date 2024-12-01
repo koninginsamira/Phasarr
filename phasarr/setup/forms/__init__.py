@@ -1,8 +1,10 @@
 import os
 import sqlalchemy as sql
 
+from flask_wtf.file import FileField
 from wtforms import Field, HiddenField, PasswordField, SelectField, StringField, SubmitField, ValidationError
 from wtforms.validators import DataRequired, EqualTo, Optional
+from werkzeug.datastructures import FileStorage
 
 from phasarr import db
 from phasarr.models.user import User
@@ -87,4 +89,22 @@ class LibrariesSetupForm(Form):
 
 
 class DownloadSetupForm(Form):
+    cookies = FileField("Cookies")
     submit = SubmitField("Finish")
+
+    def validate_cookies(self, field: Field):
+        file: FileStorage = field.data
+
+        if file:
+            if not file.filename.endswith(".txt"):
+                raise ValidationError("Please upload a .txt file.")
+            try:
+                file.seek(0)
+                first_line = file.readline().decode('utf-8').strip()
+                file.seek(0)
+
+                if first_line != "# Netscape HTTP Cookie File":
+                    raise ValidationError("Make sure the file is a valid Netscape cookies file.")
+            
+            except Exception as e:
+                raise ValidationError(e)

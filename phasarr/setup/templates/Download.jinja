@@ -8,15 +8,10 @@
 #}
 
 <setup.Setup current_stage={{ current_stage }} stages={{ stages }}>
-    <form action="" method="post" novalidate>
+    <form action="" method="post" enctype="multipart/form-data" novalidate>
         {{ form.hidden_tag() }}
         
-        <div class="
-            py-8 leading-6 space-y-8 sm:leading-7
-            text-base text-on-surface sm:text-lg
-        ">
-        
-        </div>
+        <form.input.InputBox field={{ form.cookies }} />
 
         <div class="flex justify-between mt-12">
             <ui.buttons.Button href={{ url_for("setup.libraries") }}>Back</ui.buttons.Button>

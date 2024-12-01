@@ -61,7 +61,7 @@ def authentication():
 
                 if new_auth_mode:
                     config.authentication.method = new_auth_mode
-                    # Is already logged in Config class
+                    # Change is already logged in Config class
 
                 config.setup.stage = 1
 
