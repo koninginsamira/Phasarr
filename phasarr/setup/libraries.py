@@ -2,7 +2,7 @@ import sqlalchemy as sql
 
 from datetime import datetime, timezone
 from flask_login import current_user
-from flask import flash, redirect, request, url_for
+from flask import flash, redirect, request, url_for, current_app as app
 
 from phasarr import db, catalog
 from phasarr.setup import setup_app, stages
@@ -45,8 +45,10 @@ def libraries(id: int = None):
 
         case "POST":
             if form.validate_on_submit():
-                new_name = form.name.data
-                new_path = form.path.data
+                old_name = library.name if library_exists else None
+                old_path = library.path if library_exists else None
+                new_name = form.name.data if form.name.data != old_name else None
+                new_path = form.path.data if form.path.data != old_path else None
                 
                 if library_exists:
                     if new_name:
@@ -61,8 +63,16 @@ def libraries(id: int = None):
                         name=new_name, path=new_path, created_by_id=current_user.id)
 
                     db.session.add(library)
-
                 db.session.commit()
+
+                if library_exists:
+                    if new_name:
+                        app.logger.info(f'Library {old_name and f'"{old_name}" '}with id "{library.id}" has had their name changed to "{new_name}".')
+                    if new_path:
+                        name = new_name or old_name
+                        app.logger.info(f'Library {name and f'"{name}" '}with id "{library.id}" has had their path changed from "{old_path}" to "{new_path}".')
+                else:
+                    app.logger.info(f'New library {library.name and f'"{library.name}" '}has been added with id "{library.id}" and path "{library.path}".')
             
                 flash("Library has been added!")
                 return redirect(url_for("setup.libraries", id=None))
