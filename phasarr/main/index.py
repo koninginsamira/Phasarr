@@ -11,6 +11,4 @@ def before():
 
 @main_app.route("/")
 def main():
-    return catalog.render(
-        "main.Main"
-    )
+    return "america yaaa"

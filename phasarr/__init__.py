@@ -79,7 +79,7 @@ def check_setup_stage():
     is_not_component = request.path.strip("/").split("/")[0] != "fragments"
     is_page = is_not_setup and is_not_api and is_not_component
 
-    setup_is_not_done = not (current_stage > len(stages))
+    setup_is_not_done = not (current_stage >= len(stages))
 
     if (is_blueprint and is_page and setup_is_not_done):
         return redirect(url_for("setup.setup"))

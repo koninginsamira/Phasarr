@@ -4,18 +4,21 @@ from flask import Blueprint
 
 stages = {
     "authentication": {
+        "stage": 0,
         "name": "Authentication",
         "icon": "fa-key",
         "skippable": 0,
         "url": "setup.authentication"
     },
     "libraries": {
+        "stage": 1,
         "name": "Libraries",
         "icon": "fa-folder-tree",
         "skippable": 0,
         "url": "setup.libraries"
     },
     "download": {
+        "stage": 2,
         "name": "Download",
         "icon": "fa-cloud-arrow-down",
         "skippable": 0,
